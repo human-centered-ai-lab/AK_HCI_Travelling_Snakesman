@@ -9,16 +9,21 @@ public class Eating : MonoBehaviour {
 	private GameObject lastSnakeBodyPart;
 	private AudioSource audioSource;
 
+    private RangeDisplayController rangeDisplayController;
+
 	void Start() {
 		lastSnakeBodyPart = GameObject.Find("snake_body_2");
 		audioSource = GetComponent<AudioSource>();
+        rangeDisplayController = GameObject.FindGameObjectWithTag("RangeDisplay").GetComponent<RangeDisplayController>();
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
-		//Debug.Log("Collision with Food!");
+        //Debug.Log("Collision with Food!");
 
-		Destroy (other.gameObject);
-		other.gameObject.SetActive (false);
+        rangeDisplayController.UpdateRange(other.gameObject.transform.position);
+
+        other.gameObject.SetActive(false);
+        Destroy (other.gameObject);
 
 		audioSource.Play ();
 
