@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using gui;
+using UnityEngine;
 
 public class Eating : MonoBehaviour {
-
 	public int maxSnakeLength = 15;
 	public GameObject snakeBodyPrefab;
 	private int currentSnakeLength = 3;
@@ -11,23 +10,23 @@ public class Eating : MonoBehaviour {
 
     private RangeDisplayController rangeDisplayController;
 
-	void Start() {
+	void Start()
+    {
 		lastSnakeBodyPart = GameObject.Find("snake_body_2");
 		audioSource = GetComponent<AudioSource>();
         rangeDisplayController = GameObject.FindGameObjectWithTag("RangeDisplay").GetComponent<RangeDisplayController>();
 	}
 
-	void OnTriggerEnter2D (Collider2D other) {
+	void OnTriggerEnter2D (Collider2D other)
+    {
         //Debug.Log("Collision with Food!");
-
         rangeDisplayController.UpdateRange(other.gameObject.transform.position);
 
-        other.gameObject.SetActive(false);
-        Destroy (other.gameObject);
+        Destroy(other.gameObject);
 
 		audioSource.Play ();
-
-		if (currentSnakeLength >= maxSnakeLength) {
+		if (currentSnakeLength >= maxSnakeLength)
+        {
 			return;
 		}
 
@@ -39,7 +38,7 @@ public class Eating : MonoBehaviour {
 		newSnakeBodyPart.GetComponent<SpriteRenderer>().sortingOrder = -currentSnakeLength;
 
 		//new part should follow last part
-		FollowGameObjectThatProvidesLastPosition followGameObject = (FollowGameObjectThatProvidesLastPosition)newSnakeBodyPart.GetComponent (typeof(FollowGameObjectThatProvidesLastPosition));
+		var followGameObject = newSnakeBodyPart.GetComponent<FollowGameObjectThatProvidesLastPosition>();
 		followGameObject.objectToFollow = lastSnakeBodyPart;
 
 		//we have a new last part

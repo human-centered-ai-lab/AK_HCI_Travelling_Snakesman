@@ -1,26 +1,30 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
-public class FollowMouse : MonoBehaviour {
-
+public class FollowMouse : MonoBehaviour
+{
 	public float speed = 1.5f;
 	private Vector3 target;
 
-	void Start () {
+	void Start ()
+    {
 		target = transform.position;
 	}
 
-	void Update () {
-		target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		target.z = transform.position.z;
-
-		//follow mouse
-		transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
-		float angle = Mathf.Atan2(target.y - Camera.main.transform.position.y, target.x - Camera.main.transform.position.x) * Mathf.Rad2Deg;
-		transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
+	void Update ()
+    {
 		//don't rotate main camera
 		Camera.main.transform.rotation = Quaternion.identity;
 	}
+
+    void FixedUpdate()
+    {
+        target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        target.z = transform.position.z;
+
+        //follow mouse
+        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+
+        float angle = Mathf.Atan2(target.y - Camera.main.transform.position.y, target.x - Camera.main.transform.position.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+    }
 }

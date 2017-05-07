@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 
-public class PointAtObject : MonoBehaviour {
-
+public class PointAtObject : MonoBehaviour
+{
 	public GameObject objectToPointAt;
 	private Vector3 target;
 
 	// Update is called once per frame
-	void Update () {
-
+	void Update ()
+    {
 		//if object to point at is already destroyed, also destroy this object
-		if (objectToPointAt == null) {
+		if (objectToPointAt == null)
+        {
 			Destroy (gameObject);
 			return;
 		}
@@ -21,8 +22,11 @@ public class PointAtObject : MonoBehaviour {
 
 		//Debug.Log("worldToViewpointPort: " + worldToViewpointPort);
 
-		if(worldToViewpointPort.x > 0 && worldToViewpointPort.x < 1 &&
-		   worldToViewpointPort.y > 0 && worldToViewpointPort.y < 1) {
+		if(worldToViewpointPort.x > 0 
+            && worldToViewpointPort.x < 1 
+            && worldToViewpointPort.y > 0 
+            && worldToViewpointPort.y < 1)
+        {
 			GetComponent<Renderer>().enabled = false;	
 			return;
 		}

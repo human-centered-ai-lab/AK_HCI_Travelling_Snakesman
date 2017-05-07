@@ -100,7 +100,9 @@ namespace AntAlgorithm
                 string str = "";
                 str += "ANT " + _id + ": Tour length: " + _tourLength + " CityOrder: ";
                 foreach (int cityId in _tour)
+                {
                     str += cityId + " ";
+                }
                 return str;
             }
         }
