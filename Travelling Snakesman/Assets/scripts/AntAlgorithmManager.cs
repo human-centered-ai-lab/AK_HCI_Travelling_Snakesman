@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AntAlgorithm;
 using util;
 using UnityEngine;
@@ -12,6 +13,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     private AntAlgorithmSimple _antAlgorithm;
     private const string TspFileToUse = "berlin52.tsp";
+    public bool IsGameFinished
+    {
+        get { return GameObject.FindGameObjectsWithTag("Food").Length == 0; }
+    }
 
     public void Start()
     {
