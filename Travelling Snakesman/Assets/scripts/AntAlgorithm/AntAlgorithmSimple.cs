@@ -99,9 +99,7 @@ namespace AntAlgorithm
             if (tourLengthTemp < _tourLength)
             {
                 _tourLength = tourLengthTemp;
-                _bestTour.Clear();
-                foreach (int cityId in bestAnt.Tour)
-                    _bestTour.Add(cityId);
+                _bestTour = new List<int>(bestAnt.Tour);
                 return true;
             }
             return false;
@@ -112,7 +110,9 @@ namespace AntAlgorithm
         {
             string str = "";
             foreach (int cityId in _bestTour)
+            {
                 str += cityId + " ";
+            }
             Debug.Log("[" + context + "] Best Dist: " + _tourLength + " Tour: " + str);
         }
 

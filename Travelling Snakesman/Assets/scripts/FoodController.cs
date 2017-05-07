@@ -2,7 +2,6 @@
 using AntAlgorithm;
 using util;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
 
 public class FoodController : MonoBehaviour
 {
@@ -32,7 +31,6 @@ public class FoodController : MonoBehaviour
             Vector3 pos = new Vector3(xPos, yPos, 0);
 
             Create(pos, city.getId());
-            //foodGameObject.transform.localScale *= Random.Range (0.8f, 2.5f); //TODO: use real values!
         }
     }
 
@@ -65,7 +63,6 @@ public class FoodController : MonoBehaviour
 
     public void OnDestroy()
     {
-        //Debug.Log(string.Format("City {0} visited.", Id));
         AntAlgorithmManager.Instance.UnregisterEatenFood(Id);
     }
 

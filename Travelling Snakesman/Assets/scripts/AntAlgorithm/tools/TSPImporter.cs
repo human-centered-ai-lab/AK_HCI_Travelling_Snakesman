@@ -26,8 +26,8 @@ namespace AntAlgorithm.tools
             int count = 0;
             List<City> cities = new List<City>();
 
-            var file = new StreamReader(Application.dataPath + Path.AltDirectorySeparatorChar + TspLibFolderName +
-                                        Path.AltDirectorySeparatorChar + fileName);
+            var file = new StreamReader(Application.dataPath + Path.AltDirectorySeparatorChar + "Resources" + Path.AltDirectorySeparatorChar + 
+                TspLibFolderName + Path.AltDirectorySeparatorChar + fileName);
 
             while ((line = file.ReadLine()) != null)
             {
