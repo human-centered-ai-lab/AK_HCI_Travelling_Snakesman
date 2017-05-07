@@ -48,7 +48,7 @@ namespace AntAlgorithm
             InitAnts();
             _pheromones = new Pheromones(cities.Count);
             _choiceInfo = new ChoiceInfo(cities.Count);
-            _choiceInfo.updateChoiceInfo(_pheromones, _distances, alpha, beta);
+            _choiceInfo.UpdateChoiceInfo(_pheromones, _distances, alpha, beta);
             Debug.Log("Choices: " + _choiceInfo.ToString);
         }
 
@@ -154,7 +154,7 @@ namespace AntAlgorithm
                 }
                 else
                 {
-                    selectionProbability[i] = _choiceInfo.getChoice(currentCity, i);
+                    selectionProbability[i] = _choiceInfo.GetChoice(currentCity, i);
                     sumProbabilities += selectionProbability[i];
                 }
             }
@@ -208,7 +208,7 @@ namespace AntAlgorithm
                 }
             }
 
-            _choiceInfo.updateChoiceInfo(_pheromones, _distances, _alpha, _beta);
+            _choiceInfo.UpdateChoiceInfo(_pheromones, _distances, _alpha, _beta);
             _tourComplete = false;
 
             //Debug.Log("Choices: " + choiceInfo.ToString);

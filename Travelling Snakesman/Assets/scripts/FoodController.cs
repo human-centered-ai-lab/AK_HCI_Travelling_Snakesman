@@ -2,11 +2,14 @@
 using AntAlgorithm;
 using util;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 public class FoodController : MonoBehaviour
 {
     private static GameObject _foodPrefab;
     private static GameObject _arrowPrefab;
+    private static Vector3 _defaultScale;
+
     public int Id { get; private set; }
 
     public static void InitializeFoodPositions(uint gameboardSize)
@@ -24,19 +27,22 @@ public class FoodController : MonoBehaviour
         //initialize food objects with normalized values
         foreach (var city in cities)
         {
-            float xPos = ((float)city.getXPosition() / (float)absoluteMaxX) * gameboardSize;
-            float yPos = ((float)city.getYPosition() / (float)absoluteMaxY) * gameboardSize;
+            float xPos = (city.getXPosition() / (float)absoluteMaxX) * gameboardSize;
+            float yPos = (city.getYPosition() / (float)absoluteMaxY) * gameboardSize;
             Vector3 pos = new Vector3(xPos, yPos, 0);
 
-            FoodController.Create(pos, city.getId());
+            Create(pos, city.getId());
             //foodGameObject.transform.localScale *= Random.Range (0.8f, 2.5f); //TODO: use real values!
         }
     }
 
     public static FoodController Create(Vector3 position, int id)
     {
-        if(_foodPrefab == null)
+        if (_foodPrefab == null)
+        {
             _foodPrefab = Resources.Load("Prefabs/FoodPrefab") as GameObject;
+            _defaultScale = _foodPrefab.transform.localScale;
+        }
         if(_arrowPrefab == null)
             _arrowPrefab = Resources.Load("Prefabs/ArrowPointAtObject") as GameObject;
 
@@ -44,15 +50,23 @@ public class FoodController : MonoBehaviour
         var controller = foodGameObject.transform.GetOrAddComponent<FoodController>();
         controller.Id = id;
 
-        GameObject arrowThatPointsToFood = Instantiate(_arrowPrefab, Vector3.zero, Quaternion.identity);
+        var arrowThatPointsToFood = Instantiate(_arrowPrefab, Vector3.zero, Quaternion.identity);
         arrowThatPointsToFood.transform.parent = Camera.main.transform;
         arrowThatPointsToFood.GetComponent<PointAtObject>().objectToPointAt = foodGameObject;
+
+        AntAlgorithmManager.Instance.RegisterFood(id, foodGameObject);
         return controller;
+    }
+
+    public void Rescale(float newScaleFactor = 1f)
+    {
+        gameObject.transform.localScale = _defaultScale * newScaleFactor;
     }
 
     public void OnDestroy()
     {
-        Debug.Log(string.Format("City {0} visited.", Id));
+        //Debug.Log(string.Format("City {0} visited.", Id));
+        AntAlgorithmManager.Instance.UnregisterEatenFood(Id);
     }
 
     #region Helper Methods

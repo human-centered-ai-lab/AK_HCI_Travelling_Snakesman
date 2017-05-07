@@ -129,9 +129,12 @@ namespace AntAlgorithm
         }
 
         // after the initialization you can modify the pheromones
-        public Pheromones GetPheromones()
+        public Pheromones Pheromones
         {
-            return _antInteraction.GetPheromones();
+            get
+            {
+                return _antInteraction.GetPheromones();
+            }
         }
 
         public double GetTourLength()

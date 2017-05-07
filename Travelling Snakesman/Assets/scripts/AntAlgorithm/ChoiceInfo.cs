@@ -14,27 +14,25 @@ namespace AntAlgorithm
     public class ChoiceInfo
     {
         // a matrix representing the choice of selecting a path
-        private double[][] choiceInfo;
-        private int size;
+        private double[,] _choiceInfo;
+        private readonly int _size;
 
         public ChoiceInfo(int numOfCities)
         {
-            this.size = numOfCities;
-            choiceInfo = new double[numOfCities][];
-            for (int i = 0; i < numOfCities; i++)
-                choiceInfo[i] = new double[numOfCities];
+            _size = numOfCities;
+            _choiceInfo = new double[numOfCities, numOfCities];
         }
 
         // choice update
-        public void updateChoiceInfo(Pheromones pheromones, Distances distances, int alpha, int beta)
+        public void UpdateChoiceInfo(Pheromones pheromones, Distances distances, int alpha, int beta)
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < _size; i++)
             {
-                for (int j = i + 1; j < size; j++)
+                for (int j = i + 1; j < _size; j++)
                 {
-                    choiceInfo[i][j] = Math.Pow(pheromones.GetPheromone(i, j), alpha) *
+                    _choiceInfo[i, j] = Math.Pow(pheromones.GetPheromone(i, j), alpha) *
                                        Math.Pow((1.0 / distances.getDistance(i, j)), beta);
-                    choiceInfo[j][i] = choiceInfo[i][j];
+                    _choiceInfo[j, i] = _choiceInfo[i, j];
                 }
             }
         }
@@ -44,19 +42,21 @@ namespace AntAlgorithm
             get
             {
                 string str = "";
-                for (int i = 0; i < choiceInfo.Length; i++)
+                for (int i = 0; i < _choiceInfo.GetLength(0); i++)
                 {
                     str += "\n";
-                    for (int j = 0; j < choiceInfo[i].Length; j++)
-                        str += choiceInfo[i][j] + " ";
+                    for (int j = 0; j < _choiceInfo.GetLength(1); j++)
+                    {
+                        str += _choiceInfo[i, j] + " ";
+                    }
                 }
                 return str;
             }
         }
 
-        public double getChoice(int cityA, int cityB)
+        public double GetChoice(int cityA, int cityB)
         {
-            return choiceInfo[cityA][cityB];
+            return _choiceInfo[cityA, cityB];
         }
     }
 }

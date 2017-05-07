@@ -1,7 +1,8 @@
 ﻿using gui;
 using UnityEngine;
 
-public class Eating : MonoBehaviour {
+public class Eating : MonoBehaviour
+{
 	public int maxSnakeLength = 15;
 	public GameObject snakeBodyPrefab;
 	private int currentSnakeLength = 3;
@@ -19,12 +20,15 @@ public class Eating : MonoBehaviour {
 
 	void OnTriggerEnter2D (Collider2D other)
     {
-        //Debug.Log("Collision with Food!");
-        rangeDisplayController.UpdateRange(other.gameObject.transform.position);
+        if (!other.gameObject.CompareTag("Food"))
+        {
+            return;
+        }
 
+        rangeDisplayController.UpdateRange(other.gameObject.transform.position);
         Destroy(other.gameObject);
 
-		audioSource.Play ();
+		audioSource.Play();
 		if (currentSnakeLength >= maxSnakeLength)
         {
 			return;
