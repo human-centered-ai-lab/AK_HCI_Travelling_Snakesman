@@ -1,31 +1,21 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 public class InitializeFood : MonoBehaviour {
 
-	public GameObject foodPrefab;
-	public GameObject arrowPrefab;
-	public int maxXandYValuesForFood = 30;
-	public string tspFileToUse = "berlin52.tsp";
-
-	private List<City> cities;
-	private AntAlgorithms.AntAlgorithmSimple aas;
+	public GameObject FoodPrefab;
+	public GameObject ArrowPrefab;
+	public int MaxXandYValuesForFood = 30;
 
 	// Use this for initialization
 	void Start () {
-
-		cities = TSPImporter.importTsp (tspFileToUse);
-		aas = GetComponent<AntAlgorithms.AntAlgorithmSimple>();
-		aas.setCities(cities);
-
-		//get min and max values of x and y coordinates, so that we can calculate normalized values
-		int minXPosition = int.MaxValue;
+        //get min and max values of x and y coordinates, so that we can calculate normalized values
+        int minXPosition = int.MaxValue;
 		int maxXPosition = int.MinValue;
 		int minYPosition = int.MaxValue;
 		int maxYPosition = int.MinValue;
 
-		foreach (City city in cities) {
+	    var cities = AntAlgorithmManager.Instance.Cities;
+        foreach (var city in cities) {
 			minXPosition = city.getXPosition() < minXPosition ? city.getXPosition() : minXPosition;
 			maxXPosition = city.getXPosition() > maxXPosition ? city.getXPosition() : maxXPosition;
 			minYPosition = city.getYPosition() < minYPosition ? city.getYPosition() : minYPosition;
@@ -45,32 +35,20 @@ public class InitializeFood : MonoBehaviour {
 		Debug.Log ("absolute max: " + absoluteMax);
 
 		//initialize food objects with normalized values
-		foreach (City city in cities) {
-			float xPos = ((float) city.getXPosition () / (float) absoluteMaxX) * maxXandYValuesForFood;
-			float yPos = ((float) city.getYPosition () / (float) absoluteMaxY) * maxXandYValuesForFood;
+		foreach (var city in cities) {
+			float xPos = ((float) city.getXPosition () / (float) absoluteMaxX) * MaxXandYValuesForFood;
+			float yPos = ((float) city.getYPosition () / (float) absoluteMaxY) * MaxXandYValuesForFood;
 			Vector3 pos = new Vector3(xPos, yPos,0);
 
-			Debug.Log ("initialize food: id: " + city.getId ().ToString () + ", pos: " + pos + "  / original pos: " + city.getXPosition() + "/" + city.getYPosition());
+			Debug.Log ("initialize food: id: " + city.getId () + ", pos: " + pos + "  / original pos: " + city.getXPosition() + "/" + city.getYPosition());
 
-			GameObject foodGameObject = (GameObject) Instantiate(foodPrefab, pos, Quaternion.identity);
+			GameObject foodGameObject = Instantiate(FoodPrefab, pos, Quaternion.identity);
 			foodGameObject.name = city.getId().ToString();
 			//foodGameObject.transform.localScale *= Random.Range (0.8f, 2.5f); //TODO: use real values!
 
-			GameObject arrowThatPointsToFood = (GameObject) Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+			GameObject arrowThatPointsToFood = Instantiate(ArrowPrefab, Vector3.zero, Quaternion.identity);
 			arrowThatPointsToFood.transform.parent = Camera.main.transform;
 			arrowThatPointsToFood.GetComponent<PointAtObject> ().objectToPointAt = foodGameObject;
 		}
-
-
-		//aas.init();
-		//for (int i = 0; i < 3000; i++) {
-		//	aas.iteration ();
-		//}
-
-		//aas.printBestTour(tspFileToUse);
 	}
-	
-	// Update is called once per frame
-	//void Update () {
-	//}
 }

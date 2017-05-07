@@ -10,20 +10,23 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.IO;
+using AntAlgorithm;
 
 public static class TSPImporter
 {
-
     private static string tspLibFolderName = "tspLib";
     private static string pointSection = "NODE_COORD_SECTION";
 
-    public static List<City> importTsp(string fileName)
+    public static List<City> ImportTsp(string fileName)
     {
         string line;
         int count = 0;
         List<City> cities = new List<City>();
-        System.IO.StreamReader file =
-           new System.IO.StreamReader(Application.dataPath + "/" + tspLibFolderName + "/" + fileName);
+
+        var file = new StreamReader(Application.dataPath + Path.AltDirectorySeparatorChar + tspLibFolderName +
+            Path.AltDirectorySeparatorChar + fileName);
+
         while ((line = file.ReadLine()) != null)
         {
             if (line == pointSection)

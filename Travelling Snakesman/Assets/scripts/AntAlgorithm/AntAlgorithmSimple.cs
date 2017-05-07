@@ -11,129 +11,137 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AntAlgorithms
+namespace AntAlgorithm
 {
     public enum Mode
     {
-        normal
+        Normal
     }
 
     public class AntAlgorithmSimple : MonoBehaviour
-    {
+    { 
         // influence of pheromone for decision
-        public int alpha = 1;
+        [SerializeField]
+        private int alpha = 1;
         // influence of distance for decision
-        public int beta = 2;
+        [SerializeField]
+        private int beta = 2;
         // pheromone decrease factor
-        public double rho = 0.07;
+        [SerializeField]
+        private double rho = 0.07;
         // pheromone increase factor
-        public double q = 100;
+        [SerializeField]
+        private double q = 100;
 
         private List<City> cities;
         // Ant interactions
-        private AntInteraction antin;
+        private AntInteraction _antInteraction;
 
-        public int numOfAnts;
-        public int firstCity;
+        [SerializeField]
+        private int numOfAnts;
+
+        [SerializeField]
+        private int firstCity;
 
         //placeholder
-        public Mode mode;
+        [SerializeField]
+        private Mode mode;
 
-        // output - updateing after every algorithm iteration
-        private double tourLength;
-        private List<int> bestTour;
+        // output - updating after every algorithm iteration
+        private double _tourLength;
+        private List<int> _bestTour;
 
         //helper
-        private int algStep = 1;
+        private int _algStep = 1;
 
         // inits step of the algorithm
         // usage: use it once for initialization
-        public void init()
+        public void Init()
         {
-            antin = new AntInteraction(alpha, beta, rho, q, numOfAnts, cities, firstCity);
-            bestTour = new List<int>();
-            tourLength = double.MaxValue;
-            checkBestTour();
-            algStep = 1;
+            _antInteraction = new AntInteraction(alpha, beta, rho, q, numOfAnts, cities, firstCity);
+            _bestTour = new List<int>();
+            _tourLength = double.MaxValue;
+            CheckBestTour();
+            _algStep = 1;
         }
 
         // iteration step of the algorithm - calculates a complete tour for every ant
         // usage: you can use it several times
-        public void iteration()
+        public void Iteration()
         {
-            antin.updateAnts();
-            antin.updatePheromones();
-            checkBestTour();
+            _antInteraction.UpdateAnts();
+            _antInteraction.UpdatePheromones();
+            CheckBestTour();
         }
 
         // all ants are moving one city ahead. If the routes are completed, a new iteration is starting.
         // usage: small part of the iteration. you should use it several times to complete an iteration
-        public void step()
+        public void Step()
         {
-            if (antin.updateAntsStepwise(algStep))
+            if (_antInteraction.UpdateAntsStepwise(_algStep))
             {
-                algStep = 1;
-                antin.updatePheromones();
-                checkBestTour();
+                _algStep = 1;
+                _antInteraction.UpdatePheromones();
+                CheckBestTour();
             }
             else
             {
-                algStep++;
+                _algStep++;
             }
         }
 
         // checks best tour so far
-        private bool checkBestTour()
+        private bool CheckBestTour()
         {
-            Ant bestAnt = antin.findBestAnt();
-            double tourLengthTemp = bestAnt.getTourLength();
+            Ant bestAnt = _antInteraction.FindBestAnt();
+            double tourLengthTemp = bestAnt.GetTourLength();
 
-            if (tourLengthTemp < tourLength)
+            if (tourLengthTemp < _tourLength)
             {
-                tourLength = tourLengthTemp;
-                bestTour.Clear();
-                for (int i = 0; i < bestAnt.getTour().Count; i++)
-                    bestTour.Add(bestAnt.getTour()[i]);
+                _tourLength = tourLengthTemp;
+                _bestTour.Clear();
+                foreach (int cityId in bestAnt.Tour)
+                    _bestTour.Add(cityId);
                 return true;
             }
             return false;
         }
 
         // debug output for best tour
-        public void printBestTour(string context)
+        public void PrintBestTour(string context)
         {
             string str = "";
-            for (int i = 0; i < bestTour.Count; i++)
-                str += bestTour[i] + " ";
-            Debug.Log("[" + context + "] Best Dist: " + tourLength + " Tour: " + str);
+            foreach (int cityId in _bestTour)
+                str += cityId + " ";
+            Debug.Log("[" + context + "] Best Dist: " + _tourLength + " Tour: " + str);
         }
 
         // usage: set cities before the initialization
-        public void setCities(List<City> cities)
+        public void SetCities(List<City> cityList)
         {
-            this.cities = cities;
+            cities = cityList;
         }
 
         // after the initialization you can modify each ant
-        public Ant getAnt(int i)
+        public Ant GetAnt(int i)
         {
-            return antin.getAnts()[i];
+            return _antInteraction.GetAnts()[i];
         }
 
         // after the initialization you can modify the pheromones
-        public Pheromones getPheromones()
+        public Pheromones GetPheromones()
         {
-            return antin.getPheromones();
+            return _antInteraction.GetPheromones();
         }
 
-        public double getTourLength()
+        public double GetTourLength()
         {
-            return tourLength;
+            return _tourLength;
         }
 
-        public List<int> getTour()
+        public List<int> GetTour()
         {
-            return bestTour;
+            return _bestTour;
         }
     }
 }

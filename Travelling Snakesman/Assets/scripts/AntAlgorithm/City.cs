@@ -6,44 +6,48 @@
  *****************************************************/
 
 /* City represents a city in the TSP */
+
 using UnityEngine;
 
-public class City
+namespace AntAlgorithm
 {
-    private int id;
-    private int xPosition;
-    private int yPosition;
-    private GameObject city;
-
-    public City(int xPosition, int yPosition, int id, string name, GameObject gameObject)
+    public class City
     {
-        this.id = id;
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
-    }
+        private int id;
+        private int xPosition;
+        private int yPosition;
+        private GameObject city;
 
-    public int getId()
-    {
-        return id;
-    }
+        public City(int xPosition, int yPosition, int id, string name, GameObject gameObject)
+        {
+            this.id = id;
+            this.xPosition = xPosition;
+            this.yPosition = yPosition;
+        }
 
-    public int getXPosition()
-    {
-        return xPosition;
-    }
+        public int getId()
+        {
+            return id;
+        }
 
-    public void setXPosition(int xPosition)
-    {
-        this.xPosition = xPosition;
-    }
+        public int getXPosition()
+        {
+            return xPosition;
+        }
 
-    public int getYPosition()
-    {
-        return yPosition;
-    }
+        public void setXPosition(int xPosition)
+        {
+            this.xPosition = xPosition;
+        }
 
-    public void setYPosition(int yPosition)
-    {
-        this.yPosition = yPosition;
+        public int getYPosition()
+        {
+            return yPosition;
+        }
+
+        public void setYPosition(int yPosition)
+        {
+            this.yPosition = yPosition;
+        }
     }
 }

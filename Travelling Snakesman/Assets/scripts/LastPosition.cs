@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class LastPosition : MonoBehaviour {
+    public Vector3 OldPosition { get; set; }
 
-	public Vector3 oldPosition;
-
-	// Use this for initialization
+    // Use this for initialization
 	void Start () {
-		InvokeRepeating("setOldPosition", 0.0f, 0.5f);
+		InvokeRepeating("SetOldPosition", 0.0f, 0.5f);
 	}
 	
-	void setOldPosition() {
-		oldPosition = transform.position;
+	void SetOldPosition() {
+		OldPosition = transform.position;
 	}
 }

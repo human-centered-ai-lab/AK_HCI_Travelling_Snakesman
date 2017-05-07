@@ -33,10 +33,10 @@ public class Eating : MonoBehaviour {
 
 		//create new snake body part like defined prefab
 		Vector3 pos = new Vector3(-100.0f,-100.0f,0);
-		GameObject newSnakeBodyPart = (GameObject) Instantiate(snakeBodyPrefab, pos, Quaternion.identity);
+		GameObject newSnakeBodyPart = Instantiate(snakeBodyPrefab, pos, Quaternion.identity);
 		newSnakeBodyPart.name = "snake_body_" + currentSnakeLength;
-		newSnakeBodyPart.GetComponent<SpriteRenderer> ().color = new Color (Random.value, Random.value, Random.value);
-		newSnakeBodyPart.GetComponent<SpriteRenderer> ().sortingOrder = -currentSnakeLength;
+		newSnakeBodyPart.GetComponent<SpriteRenderer>().color = new Color (Random.value, Random.value, Random.value);
+		newSnakeBodyPart.GetComponent<SpriteRenderer>().sortingOrder = -currentSnakeLength;
 
 		//new part should follow last part
 		FollowGameObjectThatProvidesLastPosition followGameObject = (FollowGameObjectThatProvidesLastPosition)newSnakeBodyPart.GetComponent (typeof(FollowGameObjectThatProvidesLastPosition));
@@ -44,7 +44,6 @@ public class Eating : MonoBehaviour {
 
 		//we have a new last part
 		lastSnakeBodyPart = newSnakeBodyPart;
-
 		currentSnakeLength++;
 	}
 }
