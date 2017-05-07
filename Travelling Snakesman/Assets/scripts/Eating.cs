@@ -21,6 +21,7 @@ public class Eating : MonoBehaviour
         _counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
         _foodEated = 0;
     }
+	
 
 	void OnTriggerEnter2D (Collider2D other)
     {
@@ -28,11 +29,12 @@ public class Eating : MonoBehaviour
         {
             return;
         }
-
+        
         _foodEated++;
 
         _rangeDisplayController.UpdateRange(other.gameObject.transform.position);
         _counterDisplayController.UpdateRange(_foodEated);
+        
         Destroy(other.gameObject);
 
 		audioSource.Play();

@@ -14,7 +14,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     private AntAlgorithmSimple _antAlgorithm;
     private const string TspFileToUse = "berlin52.tsp";
-    private GameObject[] remainingFood;
+    private GameObject[] _remainingFood;
+    private List<int> _userTour;
 
     public bool IsGameFinished
     {
@@ -24,11 +25,11 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     public void Start()
     {
         Cities = TSPImporter.ImportTsp(TspFileToUse);
-        remainingFood = new GameObject[Cities.Count];
+        _remainingFood = new GameObject[Cities.Count];
         _antAlgorithm = transform.GetOrAddComponent<AntAlgorithmSimple>();
         _antAlgorithm.SetCities(Cities);
         _antAlgorithm.Init();
-
+        _userTour = new List<int>();
         FoodController.InitializeFoodPositions(GameBoardSize);
     }
 
@@ -44,25 +45,36 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void RegisterFood(int id, GameObject go)
     {
-        Debug.Assert(remainingFood[id] == null);
-        remainingFood[id] = go;
-        Debug.Assert(remainingFood[id] != null);
+        Debug.Assert(_remainingFood[id] == null);
+        _remainingFood[id] = go;
+        Debug.Assert(_remainingFood[id] != null);
     }
 
     public void UnregisterEatenFood(int id)
     {
-        remainingFood[id] = null;
+        _userTour.Add(id);
+        _remainingFood[id] = null;
         var connectedPheromones = _antAlgorithm.Pheromones.GetPheromones(id);
         var pheromoneMaximum = connectedPheromones.Max();
 
         for (int idx = 0; idx < connectedPheromones.Length; idx++)
         {
-            if(remainingFood[idx] == null)
+            if(_remainingFood[idx] == null)
                 continue;
-
             var scaleFactor = 1 + (float)(connectedPheromones[idx] / pheromoneMaximum) * MaximumEnlargementFactor;
-            remainingFood[idx].GetComponent<FoodController>().Rescale(scaleFactor);
+            _remainingFood[idx].GetComponent<FoodController>().Rescale(scaleFactor);
         }
+        UpdatePheromones();
         RunXIterations(5);
     }
+
+    private void UpdatePheromones()
+    {
+        if (_userTour.Count < 2) return;
+        var lastIdx = _userTour.Count - 1;
+        var cityA = _userTour[lastIdx];
+        var cityB = _userTour[lastIdx - 1];
+        _antAlgorithm.Pheromones.IncreasePheromone(cityA, cityB, _antAlgorithm.Pheromones.GetPheromone(cityA, cityB));
+    }
+
 }

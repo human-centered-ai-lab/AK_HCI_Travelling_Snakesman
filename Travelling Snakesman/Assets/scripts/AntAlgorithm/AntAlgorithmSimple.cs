@@ -110,7 +110,9 @@ namespace AntAlgorithm
         {
             string str = "";
             foreach (int cityId in _bestTour)
+            {
                 str += cityId + " ";
+            }
             Debug.Log("[" + context + "] Best Dist: " + _tourLength + " Tour: " + str);
         }
 
