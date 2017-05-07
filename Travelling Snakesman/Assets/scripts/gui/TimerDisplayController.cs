@@ -7,11 +7,14 @@ namespace gui
     { 
         [SerializeField] private Text timerLabel;
         private float _time;
+
         // Update is called once per frame
         void Update ()
         {
-            if(AntAlgorithmManager.Instance.IsGameFinished)
+            if (AntAlgorithmManager.Instance.IsGameFinished)
+            {
                 return;
+            }
 
             _time += Time.deltaTime;
 

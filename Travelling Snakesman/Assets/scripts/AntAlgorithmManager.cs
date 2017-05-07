@@ -63,6 +63,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             var scaleFactor = 1 + (float)(connectedPheromones[idx] / pheromoneMaximum) * MaximumEnlargementFactor;
             remainingFood[idx].GetComponent<FoodController>().Rescale(scaleFactor);
         }
-        RunXIterations(10);
+        RunXIterations(5);
     }
 }

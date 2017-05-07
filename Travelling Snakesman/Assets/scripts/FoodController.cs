@@ -2,6 +2,7 @@
 using AntAlgorithm;
 using util;
 using UnityEngine;
+using gui;
 using Debug = System.Diagnostics.Debug;
 
 public class FoodController : MonoBehaviour
@@ -34,6 +35,11 @@ public class FoodController : MonoBehaviour
             Create(pos, city.getId());
             //foodGameObject.transform.localScale *= Random.Range (0.8f, 2.5f); //TODO: use real values!
         }
+
+        CounterDisplayController counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
+        counterDisplayController.maxFood = cities.Count; // set max Food to Counter
+
+
     }
 
     public static FoodController Create(Vector3 position, int id)

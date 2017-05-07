@@ -14,7 +14,14 @@ public class FollowMouse : MonoBehaviour
     {
 		//don't rotate main camera
 		Camera.main.transform.rotation = Quaternion.identity;
-	}
+
+
+        if (AntAlgorithmManager.Instance.IsGameFinished)
+        {
+            speed = 0;
+            return;
+        }
+    }
 
     void FixedUpdate()
     {
