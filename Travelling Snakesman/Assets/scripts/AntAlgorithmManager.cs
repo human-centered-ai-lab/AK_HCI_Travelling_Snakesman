@@ -7,8 +7,15 @@ using UnityEngine;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
+    public enum ScalingMethod
+    {
+        Max,
+        MinMax
+    }
+
     [SerializeField] private uint GameBoardSize = 30;
     [SerializeField] private float MaximumEnlargementFactor = 0.5f;
+    [SerializeField] private ScalingMethod Scaling;
 
     protected AntAlgorithmManager() {}
 
@@ -16,9 +23,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     private const string TspFileToUse = "berlin52.tsp";
     private GameObject[] _remainingFood;
     private List<int> _userTour;
-    public GameObject linez;
-    private LineRenderer lineRenderer;
-    public Material material;
+
+    private Vector3 _nextBestFoodPosition;
 
     public bool IsGameFinished
     {
@@ -35,13 +41,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _userTour = new List<int>();
         FoodController.InitializeFoodPositions(GameBoardSize);
 
-        lineRenderer = gameObject.AddComponent<LineRenderer>();
-
-        // Assigns a material named "Assets/Resources/DEV_Orange" to the object.
-        Material newMat = Resources.Load("lineColor") as Material;
-        lineRenderer.material = newMat;
-
-
+        _nextBestFoodPosition = new Vector3(0, 0, 0); // init
     }
 
     public List<City> Cities { get; private set; }
@@ -62,38 +62,36 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         Debug.Assert(_remainingFood[id] != null);
     }
 
+    public Vector3 getNextPosition()
+    {
+        return _nextBestFoodPosition;
+    }
+
     public void UnregisterEatenFood(int id)
     {
         _userTour.Add(id);
-        FoodController rf_eaten;
-        rf_eaten = _remainingFood[id].GetComponent<FoodController>();
-        Vector3 from = rf_eaten.getPosition();
+        Vector3 from = _remainingFood[id].transform.position;
 
         _remainingFood[id] = null;
-        var connectedPheromones = _antAlgorithm.Pheromones.GetPheromones(id);
-        var pheromoneMaximum = connectedPheromones.Max();
-        Vector3 to = new Vector3(0,0,0);
+        var pheromones = _antAlgorithm.Pheromones.GetPheromones(id);
+        var max = GetRemainingMaximum(pheromones);
+        var min = GetRemainingMinimum(pheromones);
 
-        for (int idx = 0; idx < connectedPheromones.Length; idx++)
+        Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
+
+        for (int idx = 0; idx < pheromones.Length; idx++)
         {
             if(_remainingFood[idx] == null)
                 continue;
-            var scaleFactor = 1 + (float)(connectedPheromones[idx] / pheromoneMaximum) * MaximumEnlargementFactor;
-            FoodController rf = _remainingFood[idx].GetComponent<FoodController>();
-            rf.Rescale(scaleFactor);
-            if (pheromoneMaximum == connectedPheromones[idx])
+            _remainingFood[idx].GetComponent<FoodController>().Rescale(GetScalingFactor(min, pheromones[idx], max));
+            
+            // set nextBestFoodPosition because of maximum of pheromones
+            if (max == pheromones[idx])
             {
-                to = rf.getPosition();
+                _nextBestFoodPosition = _remainingFood[idx].transform.position;
             }
         }
 
-
-       
-
-        lineRenderer.SetPosition(0, from);
-        lineRenderer.SetPosition(1, to);
-        //lineRenderer.material = material;
-        lineRenderer.SetWidth(0.15f, 0.15f);
         UpdatePheromones();
         RunXIterations(5);
     }
@@ -107,4 +105,41 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _antAlgorithm.Pheromones.IncreasePheromone(cityA, cityB, _antAlgorithm.Pheromones.GetPheromone(cityA, cityB));
     }
 
+    #region Helper Methods
+    private float GetScalingFactor(double min, double value, double max)
+    {
+        switch (Scaling)
+        {
+            case ScalingMethod.Max:
+                return 1 + (float)(value / max) * MaximumEnlargementFactor;
+            case ScalingMethod.MinMax:
+                return 1 + (float)((max - value) / (max - min)) * MaximumEnlargementFactor;
+            default:
+                return 1;
+        }
+    }
+
+    private double GetRemainingMaximum(double[] arr)
+    {
+        var tmp = (double[])arr.Clone();
+
+        foreach (var visitedCityIdx in _userTour)
+        {
+            tmp[visitedCityIdx] = double.MinValue;
+        }
+        return tmp.Max();
+    }
+
+    private double GetRemainingMinimum(double[] arr)
+    {
+        var tmp = (double[])arr.Clone();
+
+        foreach (var visitedCityIdx in _userTour)
+        {
+            tmp[visitedCityIdx] = double.MaxValue;
+        }
+        return tmp.Min();
+    }
+
+    #endregion
 }

@@ -21,7 +21,6 @@ public class Eating : MonoBehaviour
         _counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
         _foodEated = 0;
     }
-	
 
 	void OnTriggerEnter2D (Collider2D other)
     {

@@ -11,7 +11,7 @@ public class PointAtObject : MonoBehaviour
 		//if object to point at is already destroyed, also destroy this object
 		if (objectToPointAt == null)
         {
-			Destroy (gameObject);
+			Destroy(gameObject);
 			return;
 		}
 			

@@ -67,11 +67,7 @@ public class FoodController : MonoBehaviour
     {
         gameObject.transform.localScale = _defaultScale * newScaleFactor;
     }
-
-    public Vector3 getPosition()
-    {
-        return pos;
-    }
+    
 
     public void OnDestroy()
     {
