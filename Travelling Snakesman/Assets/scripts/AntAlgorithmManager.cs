@@ -16,6 +16,9 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     private const string TspFileToUse = "berlin52.tsp";
     private GameObject[] _remainingFood;
     private List<int> _userTour;
+    public GameObject linez;
+    private LineRenderer lineRenderer;
+    public Material material;
 
     public bool IsGameFinished
     {
@@ -31,6 +34,14 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _antAlgorithm.Init();
         _userTour = new List<int>();
         FoodController.InitializeFoodPositions(GameBoardSize);
+
+        lineRenderer = gameObject.AddComponent<LineRenderer>();
+
+        // Assigns a material named "Assets/Resources/DEV_Orange" to the object.
+        Material newMat = Resources.Load("lineColor") as Material;
+        lineRenderer.material = newMat;
+
+
     }
 
     public List<City> Cities { get; private set; }
@@ -41,6 +52,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         {
             _antAlgorithm.Iteration();
         }
+        _antAlgorithm.PrintBestTour("After Run");
     }
 
     public void RegisterFood(int id, GameObject go)
@@ -53,17 +65,35 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     public void UnregisterEatenFood(int id)
     {
         _userTour.Add(id);
+        FoodController rf_eaten;
+        rf_eaten = _remainingFood[id].GetComponent<FoodController>();
+        Vector3 from = rf_eaten.getPosition();
+
         _remainingFood[id] = null;
         var connectedPheromones = _antAlgorithm.Pheromones.GetPheromones(id);
         var pheromoneMaximum = connectedPheromones.Max();
+        Vector3 to = new Vector3(0,0,0);
 
         for (int idx = 0; idx < connectedPheromones.Length; idx++)
         {
             if(_remainingFood[idx] == null)
                 continue;
             var scaleFactor = 1 + (float)(connectedPheromones[idx] / pheromoneMaximum) * MaximumEnlargementFactor;
-            _remainingFood[idx].GetComponent<FoodController>().Rescale(scaleFactor);
+            FoodController rf = _remainingFood[idx].GetComponent<FoodController>();
+            rf.Rescale(scaleFactor);
+            if (pheromoneMaximum == connectedPheromones[idx])
+            {
+                to = rf.getPosition();
+            }
         }
+
+
+       
+
+        lineRenderer.SetPosition(0, from);
+        lineRenderer.SetPosition(1, to);
+        //lineRenderer.material = material;
+        lineRenderer.SetWidth(0.15f, 0.15f);
         UpdatePheromones();
         RunXIterations(5);
     }

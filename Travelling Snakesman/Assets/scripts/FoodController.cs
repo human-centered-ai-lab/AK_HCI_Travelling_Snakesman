@@ -9,6 +9,7 @@ public class FoodController : MonoBehaviour
     private static GameObject _foodPrefab;
     private static GameObject _arrowPrefab;
     private static Vector3 _defaultScale;
+    public static Vector3 pos;
 
     public int Id { get; private set; }
 
@@ -29,7 +30,7 @@ public class FoodController : MonoBehaviour
         {
             float xPos = (city.getXPosition() / (float)absoluteMaxX) * gameboardSize;
             float yPos = (city.getYPosition() / (float)absoluteMaxY) * gameboardSize;
-            Vector3 pos = new Vector3(xPos, yPos, 0);
+            pos = new Vector3(xPos, yPos, 0);
 
             Create(pos, city.getId());
         }
@@ -65,6 +66,11 @@ public class FoodController : MonoBehaviour
     public void Rescale(float newScaleFactor = 1f)
     {
         gameObject.transform.localScale = _defaultScale * newScaleFactor;
+    }
+
+    public Vector3 getPosition()
+    {
+        return pos;
     }
 
     public void OnDestroy()
