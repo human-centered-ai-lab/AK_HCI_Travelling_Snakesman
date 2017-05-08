@@ -36,7 +36,11 @@ public class FollowMouse : MonoBehaviour
         if (AntAlgorithmManager.Instance.IsGameFinished)
         {
             Speed = 0;
-            return;
+            if (showLine)
+            {
+                lineRenderer.SetPosition(1, transform.position); // snakehead position
+            }
+                return;
         }
 
         if (showLine)
