@@ -7,8 +7,15 @@ using UnityEngine;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
+    public enum ScalingMethod
+    {
+        Max,
+        MinMax
+    }
+
     [SerializeField] private uint GameBoardSize = 30;
     [SerializeField] private float MaximumEnlargementFactor = 0.5f;
+    [SerializeField] private ScalingMethod Scaling;
 
     protected AntAlgorithmManager() {}
 
@@ -54,15 +61,17 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     {
         _userTour.Add(id);
         _remainingFood[id] = null;
-        var connectedPheromones = _antAlgorithm.Pheromones.GetPheromones(id);
-        var pheromoneMaximum = connectedPheromones.Max();
+        var pheromones = _antAlgorithm.Pheromones.GetPheromones(id);
+        var max = GetRemainingMaximum(pheromones);
+        var min = GetRemainingMinimum(pheromones);
 
-        for (int idx = 0; idx < connectedPheromones.Length; idx++)
+        Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
+
+        for (int idx = 0; idx < pheromones.Length; idx++)
         {
             if(_remainingFood[idx] == null)
                 continue;
-            var scaleFactor = 1 + (float)(connectedPheromones[idx] / pheromoneMaximum) * MaximumEnlargementFactor;
-            _remainingFood[idx].GetComponent<FoodController>().Rescale(scaleFactor);
+            _remainingFood[idx].GetComponent<FoodController>().Rescale(GetScalingFactor(min, pheromones[idx], max));
         }
         UpdatePheromones();
         RunXIterations(5);
@@ -77,4 +86,41 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _antAlgorithm.Pheromones.IncreasePheromone(cityA, cityB, _antAlgorithm.Pheromones.GetPheromone(cityA, cityB));
     }
 
+    #region Helper Methods
+    private float GetScalingFactor(double min, double value, double max)
+    {
+        switch (Scaling)
+        {
+            case ScalingMethod.Max:
+                return 1 + (float)(value / max) * MaximumEnlargementFactor;
+            case ScalingMethod.MinMax:
+                return 1 + (float)((max - value) / (max - min)) * MaximumEnlargementFactor;
+            default:
+                return 1;
+        }
+    }
+
+    private double GetRemainingMaximum(double[] arr)
+    {
+        var tmp = (double[])arr.Clone();
+
+        foreach (var visitedCityIdx in _userTour)
+        {
+            tmp[visitedCityIdx] = double.MinValue;
+        }
+        return tmp.Max();
+    }
+
+    private double GetRemainingMinimum(double[] arr)
+    {
+        var tmp = (double[])arr.Clone();
+
+        foreach (var visitedCityIdx in _userTour)
+        {
+            tmp[visitedCityIdx] = double.MaxValue;
+        }
+        return tmp.Min();
+    }
+
+    #endregion
 }
