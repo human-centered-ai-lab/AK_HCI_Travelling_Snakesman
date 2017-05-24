@@ -13,7 +13,7 @@ public class FoodController : MonoBehaviour
 
     public int Id { get; private set; }
 
-    public static void InitializeFoodPositions(uint gameboardSize)
+	public static void InitializeFoodPositions(uint gameboardSize, bool rotateGameBoard = true)
     {
         //get min and max values of x and y coordinates, so that we can calculate normalized values
         int minX, maxX, minY, maxY;
@@ -24,21 +24,21 @@ public class FoodController : MonoBehaviour
 
         int absoluteMaxX = Mathf.Max(Mathf.Abs(minX), Mathf.Abs(maxX));
         int absoluteMaxY = Mathf.Max(Mathf.Abs(minY), Mathf.Abs(maxY));
+		int angleToRotate = rotateGameBoard ? Random.Range (0, 359) : 0;
+		Debug.Log ("Game board is rotated, so that player is not board when playing with same town more often. Angle to rotate: " + angleToRotate);
 
         //initialize food objects with normalized values
         foreach (var city in cities)
         {
             float xPos = (city.getXPosition() / (float)absoluteMaxX) * gameboardSize;
             float yPos = (city.getYPosition() / (float)absoluteMaxY) * gameboardSize;
-            pos = new Vector3(xPos, yPos, 0);
+			pos = Quaternion.Euler (0, 0, angleToRotate) * new Vector3(xPos, yPos, 0);
 
             Create(pos, city.getId());
         }
 
         CounterDisplayController counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
         counterDisplayController.maxFood = cities.Count; // set max Food to Counter
-
-
     }
 
     public static FoodController Create(Vector3 position, int id)
@@ -48,7 +48,7 @@ public class FoodController : MonoBehaviour
             _foodPrefab = Resources.Load("Prefabs/FoodPrefab") as GameObject;
             _defaultScale = _foodPrefab.transform.localScale;
         }
-        if(_arrowPrefab == null)
+        if (_arrowPrefab == null)
             _arrowPrefab = Resources.Load("Prefabs/ArrowPointAtObject") as GameObject;
 
         var foodGameObject = Instantiate(_foodPrefab, position, Quaternion.identity);
@@ -67,8 +67,18 @@ public class FoodController : MonoBehaviour
     {
         gameObject.transform.localScale = _defaultScale * newScaleFactor;
     }
-    
 
+	public void Redye(float redyeFactor = 1.0f)
+	{
+		float rgbValues = 255 * redyeFactor;
+		if (rgbValues < 80) //no item should be completely black
+		{
+			rgbValues = 80;
+		}
+
+		gameObject.GetComponent<SpriteRenderer>().color = new Color (rgbValues, rgbValues, rgbValues);
+	}
+    
     public void OnDestroy()
     {
         AntAlgorithmManager.Instance.UnregisterEatenFood(Id);

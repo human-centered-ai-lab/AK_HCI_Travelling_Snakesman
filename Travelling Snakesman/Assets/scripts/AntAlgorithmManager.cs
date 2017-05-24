@@ -77,13 +77,14 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         var max = GetRemainingMaximum(pheromones);
         var min = GetRemainingMinimum(pheromones);
 
-        Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
+        //Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
 
         for (int idx = 0; idx < pheromones.Length; idx++)
         {
             if(_remainingFood[idx] == null)
                 continue;
-            _remainingFood[idx].GetComponent<FoodController>().Rescale(GetScalingFactor(min, pheromones[idx], max));
+            //_remainingFood[idx].GetComponent<FoodController>().Rescale(GetScalingFactor(min, pheromones[idx], max));
+			_remainingFood[idx].GetComponent<FoodController>().Redye(GetRedyeFactor(min, pheromones[idx], max));
             
             // set nextBestFoodPosition because of maximum of pheromones
             if (max == pheromones[idx])
@@ -118,6 +119,12 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
                 return 1;
         }
     }
+
+	//returns value between 0 (for min value) and 1 (for max value)
+	private float GetRedyeFactor(double min, double value, double max)
+	{
+		return (float)( (value - min) / (max - min) );
+	}
 
     private double GetRemainingMaximum(double[] arr)
     {
