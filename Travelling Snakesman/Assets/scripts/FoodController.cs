@@ -52,6 +52,7 @@ public class FoodController : MonoBehaviour
             _arrowPrefab = Resources.Load("Prefabs/ArrowPointAtObject") as GameObject;
 
         var foodGameObject = Instantiate(_foodPrefab, position, Quaternion.identity);
+		foodGameObject.name = "foodGameObject_" + id;
         var controller = foodGameObject.transform.GetOrAddComponent<FoodController>();
         controller.Id = id;
 
@@ -70,13 +71,12 @@ public class FoodController : MonoBehaviour
 
 	public void Redye(float redyeFactor = 1.0f)
 	{
-		float rgbValues = 255 * redyeFactor;
-		if (rgbValues < 80) //no item should be completely black
+		if (redyeFactor < 0.4f) //no item should be completely black
 		{
-			rgbValues = 80;
+			redyeFactor = 0.4f;
 		}
 
-		gameObject.GetComponent<SpriteRenderer>().color = new Color (rgbValues, rgbValues, rgbValues);
+		gameObject.GetComponent<SpriteRenderer>().color = new Color (redyeFactor, redyeFactor, redyeFactor);
 	}
     
     public void OnDestroy()
