@@ -114,7 +114,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             case ScalingMethod.Max:
                 return 1 + (float)(value / max) * MaximumEnlargementFactor;
             case ScalingMethod.MinMax:
-                return 1 + (float)((max - value) / (max - min)) * MaximumEnlargementFactor;
+                return 1 + (float)((value - min) / (max - min)) * MaximumEnlargementFactor;
             default:
                 return 1;
         }
