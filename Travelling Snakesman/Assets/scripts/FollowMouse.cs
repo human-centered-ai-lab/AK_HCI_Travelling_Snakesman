@@ -3,7 +3,7 @@
 public class FollowMouse : MonoBehaviour
 {
 
-    private bool showLine = true; 
+    private bool showLine = false; 
 
 	public float Speed = 1.5f;
 	private Vector3 _target;

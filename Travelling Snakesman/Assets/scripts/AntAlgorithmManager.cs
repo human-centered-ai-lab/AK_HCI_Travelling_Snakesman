@@ -52,7 +52,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         {
             _antAlgorithm.Iteration();
         }
-        _antAlgorithm.PrintBestTour("After Run");
+        //_antAlgorithm.PrintBestTour("After Run");
     }
 
     public void RegisterFood(int id, GameObject go)
@@ -123,7 +123,12 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 	//returns value between 0 (for min value) and 1 (for max value)
 	private float GetRedyeFactor(double min, double value, double max)
 	{
-		return (float)( (value - min) / (max - min) );
+		double divisor = max - min;
+		if (divisor == 0) {
+			divisor = 0.001;
+		}
+
+		return (float)( (value - min) / divisor );
 	}
 
     private double GetRemainingMaximum(double[] arr)

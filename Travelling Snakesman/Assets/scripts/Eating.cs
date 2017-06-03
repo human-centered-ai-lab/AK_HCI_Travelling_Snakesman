@@ -31,7 +31,11 @@ public class Eating : MonoBehaviour
         
         _foodEated++;
 
-        _rangeDisplayController.UpdateRange(other.gameObject.transform.position);
+		Vector3 realCityCoordinates = getRealCityCoordinatesOfFoodGameObject(other);
+
+        //_rangeDisplayController.UpdateRange(other.gameObject.transform.position); //gameObject coordinates
+		_rangeDisplayController.UpdateRange(realCityCoordinates); //real city coordinates
+
         _counterDisplayController.UpdateRange(_foodEated);
         
         Destroy(other.gameObject);
@@ -56,5 +60,19 @@ public class Eating : MonoBehaviour
 		//we have a new last part
 		lastSnakeBodyPart = newSnakeBodyPart;
 		currentSnakeLength++;
+	}
+
+	//VERY dirty code to get real coordinates of city (game coordinates are not equal to real city coordinates)
+	private Vector3 getRealCityCoordinatesOfFoodGameObject(Collider2D food)
+	{
+		int cityID = -1;
+		int.TryParse (food.name.Substring (food.name.LastIndexOf ('_') + 1), out cityID);
+		//Debug.Log ("cityID: " + cityID);
+		//Debug.Log("food.transform.position: " + food.transform.position);
+		AntAlgorithm.City city = AntAlgorithmManager.Instance.Cities [cityID];
+		Vector3 realCityCoordinates = new Vector3 (city.getXPosition(), city.getYPosition(), 0);
+		//Debug.Log ("REAL city coordinates: " + realCityCoordinates);
+
+		return realCityCoordinates;
 	}
 }
