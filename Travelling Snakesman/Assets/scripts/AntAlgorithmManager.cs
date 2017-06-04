@@ -4,6 +4,7 @@ using AntAlgorithm;
 using AntAlgorithm.tools;
 using util;
 using UnityEngine;
+using System.Collections;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
@@ -33,7 +34,45 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void Start()
     {
-        Cities = TSPImporter.ImportTsp(TspFileToUse);
+        Debug.Log("--- FIND EDITION ---");
+        
+
+        #if UNITY_STANDALONE_WIN
+            Debug.Log("Stand Alone Windows");
+            Cities = TSPImporter.ImportTsp(TspFileToUse);
+            init();
+        #endif
+
+
+        #if UNITY_WEBGL
+            Debug.Log("WebGL");
+        
+            TSPImporter tsp = new TSPImporter();
+            IEnumerator startTspWebLoad = tsp.ImportTspFromWeb(TspFileToUse);
+            StartCoroutine(startTspWebLoad);
+            IEnumerator waitLoad = waitUntilLoadFinished(tsp);
+            StartCoroutine(waitLoad);
+        #endif
+
+    }
+
+    public IEnumerator waitUntilLoadFinished(TSPImporter tsp)
+    {
+        while (!tsp.loadingComplete)
+            yield return new WaitForEndOfFrame();
+
+        Debug.Log(" ---- Web-Load Finished ----- ");
+        Cities = tsp.Cities;
+        Debug.Log("Count: ");
+        Debug.Log(Cities.Count);
+        Debug.Log(Cities);
+
+        init();
+        yield break;
+    }
+
+    public void init()
+    {
         _remainingFood = new GameObject[Cities.Count];
         _antAlgorithm = transform.GetOrAddComponent<AntAlgorithmSimple>();
         _antAlgorithm.SetCities(Cities);
@@ -43,6 +82,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
     }
+
+
 
     public List<City> Cities { get; private set; }
 

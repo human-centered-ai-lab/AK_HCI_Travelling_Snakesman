@@ -18,6 +18,13 @@ namespace AntAlgorithm
         private int yPosition;
         private GameObject city;
 
+        public City(int xPosition, int yPosition, int id)
+        {
+            this.id = id;
+            this.xPosition = xPosition;
+            this.yPosition = yPosition;
+        }
+
         public City(int xPosition, int yPosition, int id, string name, GameObject gameObject)
         {
             this.id = id;
