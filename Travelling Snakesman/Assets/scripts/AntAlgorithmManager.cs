@@ -29,8 +29,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     private const string TspFileToUse = "berlin52.tsp";
     private GameObject[] _remainingFood;
     private List<int> _userTour;
-
+    private List<City> _userTourCities;
     private Vector3 _nextBestFoodPosition;
+
+    public List<City> Cities { get; private set; }
 
     public bool IsGameFinished
     {
@@ -83,14 +85,11 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _antAlgorithm.SetCities(Cities);
         _antAlgorithm.Init();
         _userTour = new List<int>();
+        _userTourCities = new List<City>();
         FoodController.InitializeFoodPositions(GameBoardSize);
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
     }
-
-
-
-    public List<City> Cities { get; private set; }
 
     public void RunXIterations(int numIter)
     {
@@ -116,6 +115,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     public void UnregisterEatenFood(int id)
     {
         _userTour.Add(id);
+        _userTourCities.Add(Cities.ElementAt(id));
         Vector3 from = _remainingFood[id].transform.position;
 
         _remainingFood[id] = null;
@@ -170,7 +170,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 	private float GetRedyeFactor(double min, double value, double max)
 	{
 		double divisor = max - min;
-		if (divisor == 0) {
+		if (divisor == 0) 
+        {
 			divisor = 0.001;
 		}
 
@@ -197,6 +198,42 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             tmp[visitedCityIdx] = double.MaxValue;
         }
         return tmp.Min();
+    }
+
+    public double CalcOverallUserDistance()
+    {
+        double distance = 0;
+        
+        for(int i = 0; i < _userTourCities.Count - 1; i++)
+        {
+            City city1 = _userTourCities.ElementAt(i);
+            City city2 = _userTourCities.ElementAt(i+1);
+
+            Vector2 city1pos = new Vector2(city1.getXPosition(), city1.getYPosition());
+            Vector2 city2pos = new Vector2(city2.getXPosition(), city2.getYPosition());
+
+            distance += Vector2.Distance(city1pos, city2pos);
+        }
+
+        return distance;
+    }
+
+    public double CalcOverallDistance(List<City> cities)
+    {
+        double distance = 0;
+        
+        for(int i = 0; i < cities.Count - 1; i++)
+        {
+            City city1 = cities.ElementAt(i);
+            City city2 = cities.ElementAt(i+1);
+
+            Vector2 city1pos = new Vector2(city1.getXPosition(), city1.getYPosition());
+            Vector2 city2pos = new Vector2(city2.getXPosition(), city2.getYPosition());
+
+            distance += Vector2.Distance(city1pos, city2pos);
+        }
+
+        return distance;
     }
 
     #endregion

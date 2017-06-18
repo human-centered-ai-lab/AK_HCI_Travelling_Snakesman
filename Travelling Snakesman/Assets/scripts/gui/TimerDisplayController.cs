@@ -18,7 +18,7 @@ namespace gui
 
             _time += Time.deltaTime;
 
-            var minutes = _time / 60;
+            var minutes = Mathf.Floor(_time / 60);
             var seconds = _time % 60;
             var fraction = _time * 1000 % 1000;
 
