@@ -957,7 +957,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642dc6511d347e44b8721dac62bb6fbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameBoardSize: 20
+  GameBoardSize: 28
   MaximumEnlargementFactor: 1.2
   Scaling: 0
 --- !u!1 &1858688074

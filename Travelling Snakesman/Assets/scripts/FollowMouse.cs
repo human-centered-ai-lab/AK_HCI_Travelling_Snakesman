@@ -10,6 +10,7 @@ public class FollowMouse : MonoBehaviour
 
     private LineRenderer lineRenderer;
     public Material material;
+    bool written = false;
 
     void Start()
     {
@@ -36,11 +37,17 @@ public class FollowMouse : MonoBehaviour
         if (AntAlgorithmManager.Instance.IsGameFinished)
         {
             Speed = 0;
+            if(!written)
+            {
+                Debug.Log("overall distance: " + AntAlgorithmManager.Instance.CalcOverallUserDistance());
+                written = true;
+            }
+
             if (showLine)
             {
                 lineRenderer.SetPosition(1, transform.position); // snakehead position
             }
-                return;
+            return;
         }
 
         if (showLine)
