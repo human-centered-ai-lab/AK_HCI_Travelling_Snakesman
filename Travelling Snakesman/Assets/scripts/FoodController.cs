@@ -9,7 +9,6 @@ public class FoodController : MonoBehaviour
     private static GameObject _foodPrefab;
     private static GameObject _arrowPrefab;
     private static Vector3 _defaultScale;
-    public static Vector3 pos;
 
     public int Id { get; private set; }
 
@@ -32,13 +31,10 @@ public class FoodController : MonoBehaviour
         {
             float xPos = (city.getXPosition() / (float)absoluteMaxX) * gameboardSize;
             float yPos = (city.getYPosition() / (float)absoluteMaxY) * gameboardSize;
-			pos = Quaternion.Euler (0, 0, angleToRotate) * new Vector3(xPos, yPos, 0);
+			var pos = Quaternion.Euler (0, 0, angleToRotate) * new Vector3(xPos, yPos, 0);
 
             Create(pos, city.getId());
         }
-
-        //CounterDisplayController counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
-        //counterDisplayController.maxFood = cities.Count; // set max Food to Counter
     }
 
     public static FoodController Create(Vector3 position, int id)

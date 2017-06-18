@@ -11,7 +11,7 @@ public class FollowMouse : MonoBehaviour
 
     private LineRenderer lineRenderer;
     public Material material;
-    bool written = false;
+    bool written;
 
     void Start()
     {
@@ -33,7 +33,6 @@ public class FollowMouse : MonoBehaviour
     {
 		//don't rotate main camera
 		Camera.main.transform.rotation = Quaternion.identity;
-
 
         if (AntAlgorithmManager.Instance.IsGameFinished)
         {
@@ -67,7 +66,7 @@ public class FollowMouse : MonoBehaviour
         {
             // set Positions of line
             lineRenderer.SetPosition(0, transform.position); // snakehead position
-            lineRenderer.SetPosition(1, AntAlgorithmManager.Instance.getNextPosition()); // "optimal" next position
+            lineRenderer.SetPosition(1, AntAlgorithmManager.Instance.GetNextPosition()); // "optimal" next position
         }
     }
 

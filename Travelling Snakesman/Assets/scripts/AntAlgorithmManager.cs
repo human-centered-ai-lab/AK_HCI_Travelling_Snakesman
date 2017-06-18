@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AntAlgorithm;
 using AntAlgorithm.tools;
@@ -8,24 +9,21 @@ using System.Collections;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
-    public enum ScalingMethod
-    {
-        Max,
-        MinMax
-    }
-
 	[HideInInspector]
 	public string playerName;
 
     [SerializeField] private uint GameBoardSize = 30;
-    [SerializeField] private float MaximumEnlargementFactor = 0.5f;
-    [SerializeField] private ScalingMethod Scaling;
 
     protected AntAlgorithmManager() {
 	}
 
     private AntAlgorithmSimple _antAlgorithm;
-    private const string TspFileToUse = "berlin52.tsp";
+
+    public const string GameName = "TravellingSnakesman";
+    public const string TspFileName = "berlin52";
+    public const int NumHighScoreEntries = 5;
+
+    private const string TspFileToUse = TspFileName + ".tsp";
     private GameObject[] _remainingFood;
     private List<int> _userTour;
     private List<City> _userTourCities;
@@ -49,7 +47,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         #if UNITY_STANDALONE_WIN
             Debug.Log("Stand Alone Windows");
             Cities = TSPImporter.ImportTsp(TspFileToUse);
-            init();
+            Init();
         #endif
 
 
@@ -67,11 +65,11 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
 	public void Awake()
 	{
-		Debug.Log ("Awake called!");
 
+		Debug.Log ("Awake called!");
 	}	
 
-    public IEnumerator waitUntilLoadFinished(TSPImporter tsp)
+    public IEnumerator WaitUntilLoadFinished(TSPImporter tsp)
     {
         while (!tsp.loadingComplete)
             yield return new WaitForEndOfFrame();
@@ -82,11 +80,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         Debug.Log(Cities.Count);
         Debug.Log(Cities);
 
-        init();
-        yield break;
+        Init();
     }
 
-    public void init()
+    public void Init()
     {
         _remainingFood = new GameObject[Cities.Count];
         _antAlgorithm = transform.GetOrAddComponent<AntAlgorithmSimple>();
@@ -122,7 +119,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         Debug.Assert(_remainingFood[id] != null);
     }
 
-    public Vector3 getNextPosition()
+    public Vector3 GetNextPosition()
     {
         return _nextBestFoodPosition;
     }
@@ -131,7 +128,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     {
         _userTour.Add(id);
         _userTourCities.Add(Cities.ElementAt(id));
-        Vector3 from = _remainingFood[id].transform.position;
 
         _remainingFood[id] = null;
         var pheromones = _antAlgorithm.Pheromones.GetPheromones(id);
@@ -148,7 +144,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 			_remainingFood[idx].GetComponent<FoodController>().Redye(GetRedyeFactor(min, pheromones[idx], max));
             
             // set nextBestFoodPosition because of maximum of pheromones
-            if (max == pheromones[idx])
+            if (Math.Abs(max - pheromones[idx]) < 1e-6 * max)
             {
                 _nextBestFoodPosition = _remainingFood[idx].transform.position;
             }
@@ -168,20 +164,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     }
 
     #region Helper Methods
-    private float GetScalingFactor(double min, double value, double max)
-    {
-        switch (Scaling)
-        {
-            case ScalingMethod.Max:
-                return 1 + (float)(value / max) * MaximumEnlargementFactor;
-            case ScalingMethod.MinMax:
-                return 1 + (float)((value - min) / (max - min)) * MaximumEnlargementFactor;
-            default:
-                return 1;
-        }
-    }
 
-	//returns value between 0 (for min value) and 1 (for max value)
+    //returns value between 0 (for min value) and 1 (for max value)
 	private float GetRedyeFactor(double min, double value, double max)
 	{
 		double divisor = max - min;
