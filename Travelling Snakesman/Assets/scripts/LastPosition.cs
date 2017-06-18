@@ -7,7 +7,7 @@ public class LastPosition : MonoBehaviour
     // Use this for initialization
 	void Start ()
     {
-		InvokeRepeating("SetOldPosition", 0.0f, 0.5f);
+		InvokeRepeating("SetOldPosition", 0.0f, 0.35f);
 	}
 	
 	void SetOldPosition()
