@@ -28,5 +28,4 @@ public class Buttonscript : MonoBehaviour {
 
 		Application.LoadLevel(levelName);
 	}
-
 }
