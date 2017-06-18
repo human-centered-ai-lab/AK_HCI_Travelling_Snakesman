@@ -39,7 +39,8 @@ public class FollowMouse : MonoBehaviour
             Speed = 0;
             if(!written)
             {
-                Debug.Log("overall distance: " + AntAlgorithmManager.Instance.CalcOverallUserDistance());
+                Debug.Log("[user distance: " + AntAlgorithmManager.Instance.CalcOverallUserDistance());
+                AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
                 written = true;
             }
 
