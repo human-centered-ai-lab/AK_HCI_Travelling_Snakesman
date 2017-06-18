@@ -89,6 +89,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         FoodController.InitializeFoodPositions(GameBoardSize);
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
+        RunXIterations(52*5);
+        PrintBestTour("algo best tour: ");
     }
 
     public void RunXIterations(int numIter)
@@ -98,6 +100,11 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             _antAlgorithm.Iteration();
         }
         //_antAlgorithm.PrintBestTour("After Run");
+    }
+
+    public void PrintBestTour(string str)
+    {
+        _antAlgorithm.PrintBestTour(str);
     }
 
     public void RegisterFood(int id, GameObject go)
