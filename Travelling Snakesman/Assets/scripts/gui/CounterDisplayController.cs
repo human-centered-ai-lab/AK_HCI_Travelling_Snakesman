@@ -16,7 +16,7 @@ namespace gui
             counterLabel.text = "0.00";
             _foodEated = 0;
             
-            maxFood = 0; // initialised by FoodController
+			maxFood = AntAlgorithmManager.Instance.Cities.Count;
         }
 	
         // Update is called once per frame

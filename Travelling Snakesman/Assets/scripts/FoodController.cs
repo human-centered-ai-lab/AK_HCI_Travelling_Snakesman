@@ -37,8 +37,8 @@ public class FoodController : MonoBehaviour
             Create(pos, city.getId());
         }
 
-        CounterDisplayController counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
-        counterDisplayController.maxFood = cities.Count; // set max Food to Counter
+        //CounterDisplayController counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
+        //counterDisplayController.maxFood = cities.Count; // set max Food to Counter
     }
 
     public static FoodController Create(Vector3 position, int id)

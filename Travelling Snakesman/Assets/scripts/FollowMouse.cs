@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class FollowMouse : MonoBehaviour
 {
@@ -39,8 +40,19 @@ public class FollowMouse : MonoBehaviour
             Speed = 0;
             if(!written)
             {
-                Debug.Log("[user distance: " + AntAlgorithmManager.Instance.CalcOverallUserDistance());
+				double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance ();
+				Debug.Log("[user distance: " + userDistance);
                 AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
+
+				GameObject bestTourText = GameObject.Find ("distance_text_1");
+				bestTourText.GetComponent<Text> ().text = ((int) userDistance).ToString();
+
+				GameObject gameEndedCanvas = GameObject.Find ("GameEndedCanvas");
+				gameEndedCanvas.GetComponent<Canvas> ().enabled = true;
+
+				GameObject gameCanvas = GameObject.Find ("Canvas");
+				gameCanvas.GetComponent<Canvas> ().enabled = false;
+
                 written = true;
             }
 

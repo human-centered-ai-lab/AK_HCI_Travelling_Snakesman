@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Buttonscript : MonoBehaviour {
 
@@ -17,7 +18,7 @@ public class Buttonscript : MonoBehaviour {
 
 	public void LoadLevelButton(string levelName)
 	{
-		Application.LoadLevel(levelName);
+		SceneManager.LoadScene (levelName, LoadSceneMode.Single);
 	}
 
 	public void LoadLevelButtonAndSavePlayerName (string levelName)
@@ -26,6 +27,6 @@ public class Buttonscript : MonoBehaviour {
 
 		PlayerPrefs.SetString("PlayerName", playerName);
 
-		Application.LoadLevel(levelName);
+		SceneManager.LoadScene (levelName, LoadSceneMode.Single);
 	}
 }

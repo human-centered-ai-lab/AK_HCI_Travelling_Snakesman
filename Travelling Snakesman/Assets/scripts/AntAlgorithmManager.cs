@@ -65,6 +65,12 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     }
 
+	public void Awake()
+	{
+		Debug.Log ("Awake called!");
+
+	}	
+
     public IEnumerator waitUntilLoadFinished(TSPImporter tsp)
     {
         while (!tsp.loadingComplete)
