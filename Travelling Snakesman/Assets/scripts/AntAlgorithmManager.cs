@@ -14,11 +14,16 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         MinMax
     }
 
+	[HideInInspector]
+	public string playerName;
+
     [SerializeField] private uint GameBoardSize = 30;
     [SerializeField] private float MaximumEnlargementFactor = 0.5f;
     [SerializeField] private ScalingMethod Scaling;
 
-    protected AntAlgorithmManager() {}
+    protected AntAlgorithmManager() {
+		playerName = "";
+	}
 
     private AntAlgorithmSimple _antAlgorithm;
     private const string TspFileToUse = "berlin52.tsp";
