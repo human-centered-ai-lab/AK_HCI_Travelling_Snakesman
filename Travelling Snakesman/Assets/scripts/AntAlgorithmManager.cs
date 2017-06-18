@@ -5,7 +5,6 @@ using AntAlgorithm;
 using AntAlgorithm.tools;
 using util;
 using UnityEngine;
-using System.Collections;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
@@ -31,6 +30,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public List<City> Cities { get; private set; }
 
+    public double BestTourLength { get { return _antAlgorithm.BestTourLength; } }
+
+    public double BestAlgorithmLength { get; private set; }
+
     public bool IsGameFinished
     {
         get { return GameObject.FindGameObjectsWithTag("Food").Length == 0; }
@@ -38,53 +41,44 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void Start()
     {
-		playerName = PlayerPrefs.GetString ("PlayerName");
-		Debug.Log ("AntAlgorithmManager Start(). Player name = " + playerName);
-
+        Debug.Log("!Start called!");
+        playerName = PlayerPrefs.GetString ("PlayerName");
         Debug.Log("--- FIND EDITION ---");
         
-
-        #if UNITY_STANDALONE_WIN
-            Debug.Log("Stand Alone Windows");
-            Cities = TSPImporter.ImportTsp(TspFileToUse);
-            Init();
-        #endif
-
-
-        #if UNITY_WEBGL
-            Debug.Log("WebGL");
+#if UNITY_STANDALONE_WIN
+        Debug.Log("Stand Alone Windows");
+        Cities = TSPImporter.ImportTsp(TspFileToUse);
+#endif
         
-            TSPImporter tsp = new TSPImporter();
-            IEnumerator startTspWebLoad = tsp.ImportTspFromWeb(TspFileToUse);
-            StartCoroutine(startTspWebLoad);
-            IEnumerator waitLoad = waitUntilLoadFinished(tsp);
-            StartCoroutine(waitLoad);
-        #endif
-
-    }
-
-	public void Awake()
-	{
-
-		Debug.Log ("Awake called!");
-	}	
-
-    public IEnumerator WaitUntilLoadFinished(TSPImporter tsp)
-    {
-        while (!tsp.loadingComplete)
-            yield return new WaitForEndOfFrame();
-
-        Debug.Log(" ---- Web-Load Finished ----- ");
-        Cities = tsp.Cities;
-        Debug.Log("Count: ");
-        Debug.Log(Cities.Count);
-        Debug.Log(Cities);
-
+#if UNITY_WEBGL
+        Debug.Log("WebGL");
+        TSPImporter tsp = new TSPImporter();
+        tsp.ImportFromWeb(TspFileToUse);
+#endif
         Init();
     }
 
+    public void Awake()
+	{
+	    DontDestroyOnLoad(transform.gameObject);
+        Debug.Log ("!Awake called!");
+	}	
+
     public void Init()
     {
+        Debug.Log("!RUNNING INIT!");
+        Debug.Log("Number of Cities: " + Cities.Count);
+        if (_userTour != null)
+        {
+            _userTour.Clear();
+            Debug.Log("\tUser tour cleared.");
+        }
+        if (_userTourCities != null)
+        {
+            _userTourCities.Clear();
+            Debug.Log("\tUser tour cities cleared.");
+        }
+
         _remainingFood = new GameObject[Cities.Count];
         _antAlgorithm = transform.GetOrAddComponent<AntAlgorithmSimple>();
         _antAlgorithm.SetCities(Cities);
@@ -96,6 +90,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
         RunXIterations(52*5);
         PrintBestTour("algo best tour: ");
+        BestAlgorithmLength = BestTourLength;
     }
 
     public void RunXIterations(int numIter)
@@ -127,7 +122,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     public void UnregisterEatenFood(int id)
     {
         _userTour.Add(id);
-        _userTourCities.Add(Cities.ElementAt(id));
+        _userTourCities.Add(Cities[id]);
 
         _remainingFood[id] = null;
         var pheromones = _antAlgorithm.Pheromones.GetPheromones(id);
@@ -140,7 +135,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         {
             if(_remainingFood[idx] == null)
                 continue;
-            //_remainingFood[idx].GetComponent<FoodController>().Rescale(GetScalingFactor(min, pheromones[idx], max));
 			_remainingFood[idx].GetComponent<FoodController>().Redye(GetRedyeFactor(min, pheromones[idx], max));
             
             // set nextBestFoodPosition because of maximum of pheromones
@@ -169,11 +163,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 	private float GetRedyeFactor(double min, double value, double max)
 	{
 		double divisor = max - min;
-		if (divisor == 0) 
+		if (Math.Abs(divisor) < 1e-6 * min) 
         {
 			divisor = 0.001;
 		}
-
 		return (float)( (value - min) / divisor );
 	}
 
@@ -205,13 +198,13 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         
         for(int i = 0; i < _userTourCities.Count - 1; i++)
         {
-            City city1 = _userTourCities.ElementAt(i);
-            City city2 = _userTourCities.ElementAt(i+1);
+            City city1 = _userTourCities[i];
+            City city2 = _userTourCities[i + 1];
 
-            Vector2 city1pos = new Vector2(city1.getXPosition(), city1.getYPosition());
-            Vector2 city2pos = new Vector2(city2.getXPosition(), city2.getYPosition());
+            Vector2 city1Pos = new Vector2(city1.getXPosition(), city1.getYPosition());
+            Vector2 city2Pos = new Vector2(city2.getXPosition(), city2.getYPosition());
 
-            distance += Vector2.Distance(city1pos, city2pos);
+            distance += Vector2.Distance(city1Pos, city2Pos);
         }
 
         return distance;
@@ -223,13 +216,13 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         
         for(int i = 0; i < cities.Count - 1; i++)
         {
-            City city1 = cities.ElementAt(i);
-            City city2 = cities.ElementAt(i+1);
+            City city1 = cities[i];
+            City city2 = cities[i + 1];
 
-            Vector2 city1pos = new Vector2(city1.getXPosition(), city1.getYPosition());
-            Vector2 city2pos = new Vector2(city2.getXPosition(), city2.getYPosition());
+            Vector2 city1Pos = new Vector2(city1.getXPosition(), city1.getYPosition());
+            Vector2 city2Pos = new Vector2(city2.getXPosition(), city2.getYPosition());
 
-            distance += Vector2.Distance(city1pos, city2pos);
+            distance += Vector2.Distance(city1Pos, city2Pos);
         }
 
         return distance;

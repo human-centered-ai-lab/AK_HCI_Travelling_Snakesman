@@ -16,7 +16,7 @@ namespace util
             return www;
         }
 
-        public static WWW Post(string url, Dictionary<string, string> post = null)
+        public static WWW Post(string url, Dictionary<string, string> post)
         {
             WWWForm form = new WWWForm();
             if (post != null)

@@ -49,7 +49,6 @@ namespace AntAlgorithm
             _pheromones = new Pheromones(cities.Count);
             _choiceInfo = new ChoiceInfo(cities.Count);
             _choiceInfo.UpdateChoiceInfo(_pheromones, _distances, alpha, beta);
-            Debug.Log("Choices: " + _choiceInfo.ToString);
         }
 
         //init the ants with random tours
@@ -218,9 +217,9 @@ namespace AntAlgorithm
         // finds the ant with the best tour
         public Ant FindBestAnt()
         {
-            double minTourLength = _ants[0].GetTourLength();
+            double minTourLength = double.MaxValue;
             int minTourLengthIndex = 0;
-            for (int i = 1; i < _ants.Count; i++)
+            for (int i = 0; i < _ants.Count; i++)
             {
                 if (_ants[i].GetTourLength() < minTourLength)
                 {

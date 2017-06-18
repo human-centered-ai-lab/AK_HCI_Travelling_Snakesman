@@ -12,5 +12,15 @@ namespace util
         {
             return child.GetComponent<T>() ?? child.gameObject.AddComponent<T>();
         }
+
+        public static T AddNewComponent<T>(this Component child) where T : Component
+        {
+            var component = child.GetComponent<T>();
+            if (component != null)
+            {
+                Component.Destroy(component);
+            }
+            return child.gameObject.AddComponent<T>();
+        }
     }
 }

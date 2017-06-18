@@ -82,16 +82,18 @@ namespace AntAlgorithm.tools
             int algorithm = 1,
             string game = AntAlgorithmManager.GameName)
         {
-            string url = AddScoreURL
-                         + "name=" + WWW.EscapeURL(userName)
-                         + "&score=" + score
-                         + "&tsp=" + tsp
-                         + "&hash=" + Hash(SecretKey)
-                         + "&algorithm=" + algorithm
-                         + "&game=" + game
-                         + "&comment=" + comment;
-            var hsPost = WebFunctions.Post(url);
-            print("HSPOST" + hsPost.url);
+            string url = AddScoreURL.TrimEnd('?');
+            var postValues = new Dictionary<string, string>();
+            postValues["name"] = userName;
+            postValues["score"] = score.ToString();
+            postValues["tsp"] = tsp;
+            postValues["hash"] = Hash(SecretKey);
+            postValues["algorithm"] = algorithm.ToString();
+            postValues["game"] = game;
+            postValues["comment"] = comment;
+            var hsPost = WebFunctions.Post(url, postValues);
+
+            print("HSPOST " + hsPost.url);
 
             if (!string.IsNullOrEmpty(hsPost.error))
             {
@@ -109,15 +111,15 @@ namespace AntAlgorithm.tools
             string url = AddScoreURL
                              + "name=" + WWW.EscapeURL(userName)
                              + "&score=" + score
-                             + "&tsp=" + tsp
-                             + "&hash=" + Hash(SecretKey)
+                             + "&tsp=" + WWW.EscapeURL(tsp)
+                             + "&hash=" + WWW.EscapeURL(Hash(SecretKey))
                              + "&algorithm=" + algorithm
-                             + "&game="+ game
-                             + "&comment=" + comment;
-
+                             + "&game="+ WWW.EscapeURL(game)
+                             + "&comment=" + WWW.EscapeURL(comment);
+            print(url);
             WWW hsPost = new WWW(url);
             yield return hsPost;
-            print("HSPOST" + hsPost.url);
+            print("HSPOST " + hsPost.url);
 
             if (!string.IsNullOrEmpty(hsPost.error))
             {
@@ -131,11 +133,12 @@ namespace AntAlgorithm.tools
         {
             Debug.Log("Retrieving High Scores...");
             ReadHighScoresFinished = false;
+            Result.Clear();
             var url = HighscoreURL
                       + "tsp=" + WWW.EscapeURL(tspName)
                       + "&num=" + numberOfEntries
-                      + "&game=" + gameName;
-
+                      + "&game=" + WWW.EscapeURL(gameName);
+            print(url);
             WWW hsGet = WebFunctions.Get(url);
 
             if (!string.IsNullOrEmpty(hsGet.error))
@@ -165,7 +168,7 @@ namespace AntAlgorithm.tools
                       + "tsp=" + WWW.EscapeURL(tspName)
                       + "&num=" + numberOfEntries
                       + "&game=" + gameName;
-
+            print(url);
             WWW hsGet = new WWW(url);
             yield return hsGet;
 

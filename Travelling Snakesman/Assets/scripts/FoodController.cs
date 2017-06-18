@@ -8,7 +8,6 @@ public class FoodController : MonoBehaviour
 {
     private static GameObject _foodPrefab;
     private static GameObject _arrowPrefab;
-    private static Vector3 _defaultScale;
 
     public int Id { get; private set; }
 
@@ -42,7 +41,6 @@ public class FoodController : MonoBehaviour
         if (_foodPrefab == null)
         {
             _foodPrefab = Resources.Load("Prefabs/FoodPrefab") as GameObject;
-            _defaultScale = _foodPrefab.transform.localScale;
         }
         if (_arrowPrefab == null)
             _arrowPrefab = Resources.Load("Prefabs/ArrowPointAtObject") as GameObject;
@@ -58,11 +56,6 @@ public class FoodController : MonoBehaviour
 
         AntAlgorithmManager.Instance.RegisterFood(id, foodGameObject);
         return controller;
-    }
-
-    public void Rescale(float newScaleFactor = 1f)
-    {
-        gameObject.transform.localScale = _defaultScale * newScaleFactor;
     }
 
 	public void Redye(float redyeFactor = 1.0f)

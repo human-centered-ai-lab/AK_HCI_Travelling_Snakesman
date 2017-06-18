@@ -48,8 +48,9 @@ namespace AntAlgorithm
         private Mode mode;
 
         // output - updating after every algorithm iteration
-        private double _tourLength;
         private List<int> _bestTour;
+
+        public double BestTourLength { get; private set; }
 
         //helper
         private int _algStep = 1;
@@ -60,7 +61,7 @@ namespace AntAlgorithm
         {
             _antInteraction = new AntInteraction(alpha, beta, rho, q, numOfAnts, cities, firstCity);
             _bestTour = new List<int>();
-            _tourLength = double.MaxValue;
+            BestTourLength = double.MaxValue;
             CheckBestTour();
             _algStep = 1;
         }
@@ -91,18 +92,16 @@ namespace AntAlgorithm
         }
 
         // checks best tour so far
-        private bool CheckBestTour()
+        private void CheckBestTour()
         {
             Ant bestAnt = _antInteraction.FindBestAnt();
             double tourLengthTemp = bestAnt.GetTourLength();
 
-            if (tourLengthTemp < _tourLength)
+            if (tourLengthTemp < BestTourLength)
             {
-                _tourLength = tourLengthTemp;
+                BestTourLength = tourLengthTemp;
                 _bestTour = new List<int>(bestAnt.Tour);
-                return true;
             }
-            return false;
         }
 
         // debug output for best tour
@@ -113,7 +112,7 @@ namespace AntAlgorithm
             {
                 str += cityId + " ";
             }
-            Debug.Log("[" + context + "] Best Dist: " + _tourLength + " Tour: " + str);
+            Debug.Log("[" + context + "] Best Dist: " + BestTourLength + " Tour: " + str);
         }
 
         // usage: set cities before the initialization
@@ -139,7 +138,7 @@ namespace AntAlgorithm
 
         public double GetTourLength()
         {
-            return _tourLength;
+            return BestTourLength;
         }
 
         public List<int> GetTour()

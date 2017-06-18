@@ -347,7 +347,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Without your help I had to travel following distance:'
+  m_Text: 'Without your help I had to travel this far:'
 --- !u!222 &173836757
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -557,7 +557,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 7991
+  m_Text: NULL
 --- !u!222 &506808452
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1507,7 +1507,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Traveled distance:'
+  m_Text: 'With your help:'
 --- !u!222 &1633142171
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1601,7 +1601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d7f8504194e4a2418e0559aaabce744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 2.5
+  Speed: 4
   material: {fileID: 0}
 --- !u!114 &1650965875
 MonoBehaviour:

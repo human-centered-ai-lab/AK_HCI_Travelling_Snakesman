@@ -11,7 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using util;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -20,7 +20,7 @@ namespace AntAlgorithm.tools
     // ReSharper disable once InconsistentNaming
     public class TSPImporter
     {
-        private const string RessourcesFolderName = "Resources";
+        private const string ResourcesFolderName = "Resources";
         private const string TspLibFolderName = "tspLib";
         private const string PointSection = "NODE_COORD_SECTION";
 
@@ -32,14 +32,14 @@ namespace AntAlgorithm.tools
         public TSPImporter(string tspWebDirectory)
         {
             Cities = new List<City>();
-            this.TspWebDirectory = tspWebDirectory;
+            TspWebDirectory = tspWebDirectory;
         }
 
         public TSPImporter()
         {
             Cities = new List<City>();
             //this.TspWebDirectory = "http://www.andrejmueller.com/TSPLIB/"; // original
-            this.TspWebDirectory = "http://localhost/tspLib/";
+            TspWebDirectory = "http://localhost/tspLib/";
             
         }
 
@@ -48,10 +48,8 @@ namespace AntAlgorithm.tools
             string line;
             int count = 0;
             List<City> cities = new List<City>();
-            System.IO.StreamReader file =
-               new System.IO.StreamReader(Application.dataPath + "/" + RessourcesFolderName + "/" + TspLibFolderName + "/" + fileName);
-            Debug.Log("file:");
-            Debug.Log(file);
+            StreamReader file =
+               new StreamReader(Application.dataPath + "/" + ResourcesFolderName + "/" + TspLibFolderName + "/" + fileName);
             while ((line = file.ReadLine()) != null)
             {
                 if (line == PointSection)
@@ -70,9 +68,26 @@ namespace AntAlgorithm.tools
             file.Close();
             return cities;
         }
-        
 
-            public IEnumerator ImportTspFromWeb(string tspFileToUse)
+        public void ImportFromWeb(string tspFileToUse)
+        {
+            loadingComplete = false;
+            string filePath = TspWebDirectory + tspFileToUse;
+            Debug.Log(filePath);
+
+            WWW www = WebFunctions.Get(filePath);
+
+            if (!string.IsNullOrEmpty(www.error))
+            {
+                Debug.Log(" ---- DOWNLOAD DONE with ERROR ----- ");
+                Debug.Log(www.error);
+                loadingComplete = true;
+                return;
+            }
+            LoadCities(www.text);
+        }
+
+        public IEnumerator ImportTspFromWeb(string tspFileToUse)
         {
             loadingComplete = false;
             string filePath = TspWebDirectory + tspFileToUse;
@@ -80,7 +95,6 @@ namespace AntAlgorithm.tools
             Debug.Log(" ---- File Path ----- ");
             Debug.Log(filePath);
             
-
             UnityWebRequest www = UnityWebRequest.Get(filePath);
             www.SetRequestHeader("Access-Control-Allow-Origin", "*");
             www.downloadHandler = new DownloadHandlerBuffer();
@@ -88,7 +102,7 @@ namespace AntAlgorithm.tools
 
             while (!www.downloadHandler.isDone)
                 yield return new WaitForEndOfFrame();
-
+            
             if (www.isError)
             {
                 Debug.Log(" ---- DOWNLOAD DONE with ERROR ----- ");
@@ -110,7 +124,7 @@ namespace AntAlgorithm.tools
             bool pointArea = false;
             int count = 0;
 
-            foreach (string line in result.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string line in result.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (string.Compare(line.Trim(), PointSection.Trim(), StringComparison.OrdinalIgnoreCase) == 0) // equal - fix because of unprintable sign at end of "line"
                 {

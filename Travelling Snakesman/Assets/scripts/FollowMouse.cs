@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AntAlgorithm.tools;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class FollowMouse : MonoBehaviour
@@ -39,18 +40,24 @@ public class FollowMouse : MonoBehaviour
             Speed = 0;
             if(!written)
             {
-				double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance ();
+				double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance();
 				Debug.Log("[user distance: " + userDistance);
                 AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
 
-				GameObject bestTourText = GameObject.Find ("distance_text_1");
-				bestTourText.GetComponent<Text> ().text = ((int) userDistance).ToString();
+				GameObject bestTourUserText = GameObject.Find ("distance_text_1");
+                bestTourUserText.GetComponent<Text> ().text = ((int)AntAlgorithmManager.Instance.BestTourLength).ToString();
 
-				GameObject gameEndedCanvas = GameObject.Find ("GameEndedCanvas");
+                GameObject bestTourText = GameObject.Find("distance_text_2");
+                bestTourText.GetComponent<Text>().text = ((int)AntAlgorithmManager.Instance.BestAlgorithmLength).ToString();
+
+                GameObject gameEndedCanvas = GameObject.Find ("GameEndedCanvas");
 				gameEndedCanvas.GetComponent<Canvas> ().enabled = true;
 
 				GameObject gameCanvas = GameObject.Find ("Canvas");
 				gameCanvas.GetComponent<Canvas> ().enabled = false;
+
+                StartCoroutine(HighScoreHandler.PostScoresAsync(AntAlgorithmManager.Instance.playerName,
+                    (int) userDistance, "CommentGoesHere"));
 
                 written = true;
             }
