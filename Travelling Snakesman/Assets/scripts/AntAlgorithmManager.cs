@@ -22,7 +22,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     [SerializeField] private ScalingMethod Scaling;
 
     protected AntAlgorithmManager() {
-		playerName = "";
 	}
 
     private AntAlgorithmSimple _antAlgorithm;
@@ -41,6 +40,9 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void Start()
     {
+		playerName = PlayerPrefs.GetString ("PlayerName");
+		Debug.Log ("AntAlgorithmManager Start(). Player name = " + playerName);
+
         Debug.Log("--- FIND EDITION ---");
         
 

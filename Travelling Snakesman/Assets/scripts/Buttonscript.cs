@@ -24,8 +24,7 @@ public class Buttonscript : MonoBehaviour {
 	{
 		string playerName = GameObject.Find ("PlayerNameInputText").GetComponent<Text> ().text;
 
-		Debug.Log ("playerName = " + playerName);
-		AntAlgorithmManager.Instance.playerName = playerName;
+		PlayerPrefs.SetString("PlayerName", playerName);
 
 		Application.LoadLevel(levelName);
 	}

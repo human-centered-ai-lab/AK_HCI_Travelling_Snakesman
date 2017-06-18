@@ -13,6 +13,12 @@ public class InputFieldScript : MonoBehaviour {
 	void Start () {
 		button = buttonToToggle.GetComponent<Button> ();
 		inputField = gameObject.GetComponent<InputField> ();
+
+
+		if (PlayerPrefs.GetString ("PlayerName", "").Length >= 1)
+		{
+			inputField.text = PlayerPrefs.GetString ("PlayerName");
+		}
 	}
 	
 	// Update is called once per frame
