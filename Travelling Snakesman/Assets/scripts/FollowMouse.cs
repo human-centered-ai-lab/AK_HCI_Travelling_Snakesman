@@ -50,6 +50,12 @@ public class FollowMouse : MonoBehaviour
                 GameObject bestTourText = GameObject.Find("distance_text_2");
                 bestTourText.GetComponent<Text>().text = ((int)AntAlgorithmManager.Instance.BestAlgorithmLength).ToString();
 
+                float improved = (((float)AntAlgorithmManager.Instance.BestAlgorithmLength) - ((float)AntAlgorithmManager.Instance.BestTourLength)) / ((float)AntAlgorithmManager.Instance.BestAlgorithmLength) * 100;
+                Debug.Log("improved: " + improved);
+
+                GameObject improvedText = GameObject.Find("distance_text_3");
+                improvedText.GetComponent<Text>().text = improved.ToString("0.00") + " %";
+
                 GameObject gameEndedCanvas = GameObject.Find ("GameEndedCanvas");
 				gameEndedCanvas.GetComponent<Canvas> ().enabled = true;
 
