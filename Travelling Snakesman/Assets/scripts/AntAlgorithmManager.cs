@@ -45,17 +45,18 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         playerName = PlayerPrefs.GetString ("PlayerName");
         Debug.Log("--- FIND EDITION ---");
         
-#if UNITY_STANDALONE_WIN
+    #if UNITY_STANDALONE_WIN
         Debug.Log("Stand Alone Windows");
         Cities = TSPImporter.ImportTsp(TspFileToUse);
-#endif
+    #endif
         
-#if UNITY_WEBGL
+    #if UNITY_WEBGL
         Debug.Log("WebGL");
         TSPImporter tsp = new TSPImporter();
         tsp.ImportFromWeb(TspFileToUse);
-#endif
-        Init();
+        Cities = tsp.Cities;
+    #endif
+    Init();
     }
 
     public void Awake()
