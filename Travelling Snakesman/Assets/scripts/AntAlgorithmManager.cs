@@ -8,9 +8,6 @@ using UnityEngine;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
-	[HideInInspector]
-	public string playerName;
-
     [SerializeField] private uint GameBoardSize = 30;
 
     protected AntAlgorithmManager() {
@@ -42,7 +39,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     public void Start()
     {
         Debug.Log("!Start called!");
-        playerName = PlayerPrefs.GetString ("PlayerName");
         Debug.Log("--- FIND EDITION ---");
         
 #if UNITY_STANDALONE_WIN
@@ -194,6 +190,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public double CalcOverallUserDistance()
     {
+		Debug.Log ("CalcOverallUserDistance. number of cities: " + _userTourCities.Count);
+
         double distance = 0;
         
         for(int i = 0; i < _userTourCities.Count - 1; i++)
@@ -214,7 +212,9 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     {
         double distance = 0;
         
-        for(int i = 0; i < cities.Count - 1; i++)
+		Debug.Log("CalcOverallDistance. #cities: " + _userTourCities.Count);
+
+		for(int i = 0; i < cities.Count - 1; i++)
         {
             City city1 = cities[i];
             City city2 = cities[i + 1];

@@ -22,7 +22,7 @@ namespace gui
             var seconds = _time % 60;
             var fraction = _time * 1000 % 1000;
 
-            timerLabel.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, fraction);
+            timerLabel.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         }
     }
 }

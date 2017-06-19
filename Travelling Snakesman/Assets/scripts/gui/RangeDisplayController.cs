@@ -19,7 +19,7 @@ namespace gui
         // Update is called once per frame
         void Update ()
         {
-            rangeLabel.text = range.ToString("n");
+			rangeLabel.text = "Travelled distance: " + range.ToString("0");
         }
 
         public void UpdateRange(Vector3 newPosition)

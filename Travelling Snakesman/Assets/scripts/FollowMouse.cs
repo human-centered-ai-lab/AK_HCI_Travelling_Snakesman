@@ -56,8 +56,10 @@ public class FollowMouse : MonoBehaviour
 				GameObject gameCanvas = GameObject.Find ("Canvas");
 				gameCanvas.GetComponent<Canvas> ().enabled = false;
 
-                StartCoroutine(HighScoreHandler.PostScoresAsync(AntAlgorithmManager.Instance.playerName,
-                    (int) userDistance, "CommentGoesHere"));
+                StartCoroutine(HighScoreHandler.PostScoresAsync(
+					PlayerPrefs.GetString ("PlayerName"),
+                    (int) userDistance,
+					"CommentGoesHere"));
 
                 written = true;
             }
