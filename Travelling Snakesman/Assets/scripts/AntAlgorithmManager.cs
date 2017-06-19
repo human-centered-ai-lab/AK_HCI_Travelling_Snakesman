@@ -152,6 +152,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         var cityA = _userTour[lastIdx];
         var cityB = _userTour[lastIdx - 1];
         _antAlgorithm.Pheromones.IncreasePheromone(cityA, cityB, _antAlgorithm.Pheromones.GetPheromone(cityA, cityB));
+		//_antAlgorithm.Pheromones.SetPheromone(cityA, cityB, 0.7);
     }
 
     #region Helper Methods

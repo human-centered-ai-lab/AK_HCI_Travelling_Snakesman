@@ -59,11 +59,18 @@ namespace AntAlgorithm
             _pheromones[cityAId, cityBId] = decreaseFactor * _pheromones[cityAId, cityBId];
         }
 
-        // decrease the pheromone value between 2 particular cities by one ant 
+        // increase the pheromone value between 2 particular cities by one ant 
         public void IncreasePheromone(int cityAId, int cityBId, double increaseValue)
         {
-            _pheromones[cityAId, cityBId] = _pheromones[cityAId, cityBId] + increaseValue;
+			double newValue = _pheromones[cityAId, cityBId] + increaseValue;
+			_pheromones[cityAId, cityBId] = newValue;
         }
+
+		// sets the pheromone value between 2 particular cities by one ant 
+		public void SetPheromone(int cityAId, int cityBId, double absValue)
+		{
+			_pheromones[cityAId, cityBId] = absValue;
+		}
 
         public double GetPheromone(int cityAId, int cityBId)
         {
