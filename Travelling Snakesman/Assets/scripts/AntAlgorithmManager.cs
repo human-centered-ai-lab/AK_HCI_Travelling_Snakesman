@@ -16,7 +16,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     private AntAlgorithmSimple _antAlgorithm;
 
     public const string GameName = "TravellingSnakesman";
-    public const string TspFileName = "berlin52";
+    public const string TspFileName = "berlin522";
     public const int NumHighScoreEntries = 5;
 
     private const string TspFileToUse = TspFileName + ".tsp";
