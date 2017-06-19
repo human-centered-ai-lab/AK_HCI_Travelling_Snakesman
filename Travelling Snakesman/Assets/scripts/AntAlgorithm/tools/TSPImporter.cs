@@ -84,6 +84,7 @@ namespace AntAlgorithm.tools
                 loadingComplete = true;
                 return;
             }
+            Debug.Log(www.text);
             LoadCities(www.text);
         }
 
@@ -136,7 +137,7 @@ namespace AntAlgorithm.tools
                     string[] cityParameter = line.Split(delimiterChars);
                     if (cityParameter.Length == 3)
                     {
-                        //Debug.Log("City" + count + " " + cityParameter[1] + " / " + cityParameter[2]);
+                        Debug.Log("City" + count + " " + cityParameter[1] + " / " + cityParameter[2]);
                         Cities.Add(new City(Int32.Parse(cityParameter[1]), Int32.Parse(cityParameter[2]), count));
                     }
                     count++;
