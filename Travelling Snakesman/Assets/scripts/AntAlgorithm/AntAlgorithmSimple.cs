@@ -38,7 +38,7 @@ namespace AntAlgorithm
         private AntInteraction _antInteraction;
 
         [SerializeField]
-        private int numOfAnts;
+        private int numOfAnts = 25;
 
         [SerializeField]
         private int firstCity;

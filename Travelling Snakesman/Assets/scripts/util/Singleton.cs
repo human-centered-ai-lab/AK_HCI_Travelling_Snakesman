@@ -19,7 +19,7 @@ namespace util
         {
             get
             {
-                if (ApplicationIsQuitting)
+                if (_applicationIsQuitting)
                 {
                     Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
                                      "' already destroyed on application quit." +
@@ -46,7 +46,6 @@ namespace util
                             GameObject singleton = new GameObject();
                             _instance = singleton.AddComponent<T>();
                             singleton.name = "(singleton) " + typeof(T);
-
                             DontDestroyOnLoad(singleton);
 
                             Debug.Log("[Singleton] An instance of " + typeof(T) +
@@ -65,7 +64,7 @@ namespace util
             }
         }
 
-        private static bool ApplicationIsQuitting = false;
+        private static bool _applicationIsQuitting;
         /// <summary>
         /// When Unity quits, it destroys objects in a random order.
         /// In principle, a Singleton is only destroyed when application quits.
@@ -76,7 +75,7 @@ namespace util
         /// </summary>
         public void OnDestroy()
         {
-            ApplicationIsQuitting = true;
+            _applicationIsQuitting = true;
         }
     }
 }

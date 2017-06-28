@@ -5,13 +5,19 @@ using AntAlgorithm;
 using AntAlgorithm.tools;
 using util;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
-    [SerializeField] private uint GameBoardSize = 30;
+    [SerializeField] private uint GameBoardSize = 25;
 
-    protected AntAlgorithmManager() {
-	}
+    protected AntAlgorithmManager()
+    {
+        _initializationFinished = false;
+        Cities = new List<City>();
+        _userTour = new List<int>();
+        _userTourCities = new List<City>();
+    }
 
     private AntAlgorithmSimple _antAlgorithm;
 
@@ -21,8 +27,9 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     private const string TspFileToUse = TspFileName + ".tsp";
     private GameObject[] _remainingFood;
-    private List<int> _userTour;
-    private List<City> _userTourCities;
+    private readonly List<int> _userTour;
+    private readonly List<City> _userTourCities;
+    private bool _initializationFinished;
     private Vector3 _nextBestFoodPosition;
 
     public List<City> Cities { get; private set; }
@@ -33,12 +40,13 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public bool IsGameFinished
     {
-        get { return GameObject.FindGameObjectsWithTag("Food").Length == 0; }
+        get { return _initializationFinished && GameObject.FindGameObjectsWithTag("Food").Length == 0; }
     }
 
     public void Start()
     {
-        Debug.Log("!Start called!");
+        _initializationFinished = false;
+        Debug.Log(string.Format("!Start called on {0}!", GetHashCode()));
         Debug.Log("--- FIND EDITION ---");
         
     #if UNITY_STANDALONE_WIN
@@ -52,25 +60,37 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         tsp.ImportFromWeb(TspFileToUse);
         Cities = tsp.Cities;
     #endif
-    Init();
+        Init();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    public void Awake()
-	{
-	    DontDestroyOnLoad(transform.gameObject);
-        Debug.Log ("!Awake called!");
-	}	
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "MainGameScreen")
+        {
+            return;
+        }
+        Init();
+    }
+
+    public void Update()
+    {
+        if (IsGameFinished)
+        {
+            _initializationFinished = false;
+        }
+    }
 
     public void Init()
     {
-        Debug.Log("!RUNNING INIT!");
-        Debug.Log("Number of Cities: " + Cities.Count);
-        if (_userTour != null)
+        Debug.Log(string.Format("!RUNNING INIT on {0}!", GetHashCode()));
+        if (_userTour.Count != 0)
         {
             _userTour.Clear();
             Debug.Log("\tUser tour cleared.");
         }
-        if (_userTourCities != null)
+        if (_userTourCities.Count != 0)
         {
             _userTourCities.Clear();
             Debug.Log("\tUser tour cities cleared.");
@@ -80,14 +100,13 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _antAlgorithm = transform.GetOrAddComponent<AntAlgorithmSimple>();
         _antAlgorithm.SetCities(Cities);
         _antAlgorithm.Init();
-        _userTour = new List<int>();
-        _userTourCities = new List<City>();
         FoodController.InitializeFoodPositions(GameBoardSize);
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
         RunXIterations(52*5);
         PrintBestTour("algo best tour: ");
         BestAlgorithmLength = BestTourLength;
+        _initializationFinished = true;
     }
 
     public void RunXIterations(int numIter)
@@ -118,6 +137,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void UnregisterEatenFood(int id)
     {
+        Debug.Log(string.Format("!UnregisterEatenFood on {0}!", GetHashCode()));
         _userTour.Add(id);
         _userTourCities.Add(Cities[id]);
 

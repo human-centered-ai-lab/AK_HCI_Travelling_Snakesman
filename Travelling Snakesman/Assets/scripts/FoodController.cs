@@ -23,7 +23,7 @@ public class FoodController : MonoBehaviour
         int absoluteMaxX = Mathf.Max(Mathf.Abs(minX), Mathf.Abs(maxX));
         int absoluteMaxY = Mathf.Max(Mathf.Abs(minY), Mathf.Abs(maxY));
 		int angleToRotate = rotateGameBoard ? Random.Range (0, 359) : 0;
-		Debug.Log ("Game board is rotated, so that player is not bored when playing with same town more often. Angle to rotate: " + angleToRotate);
+		// Debug.Log ("Game board is rotated, so that player is not bored when playing with same town more often. Angle to rotate: " + angleToRotate);
 
         //initialize food objects with normalized values
         foreach (var city in cities)

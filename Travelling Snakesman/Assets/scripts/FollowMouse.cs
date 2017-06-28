@@ -40,7 +40,9 @@ public class FollowMouse : MonoBehaviour
             Speed = 0;
             if(!written)
             {
-				double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance();
+                written = true;
+
+                double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance();
 				Debug.Log("[user distance: " + userDistance);
                 AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
 
@@ -50,7 +52,8 @@ public class FollowMouse : MonoBehaviour
                 GameObject bestTourText = GameObject.Find("distance_text_2");
                 bestTourText.GetComponent<Text>().text = ((int)AntAlgorithmManager.Instance.BestAlgorithmLength).ToString();
 
-                float improved = (((float)AntAlgorithmManager.Instance.BestAlgorithmLength) - ((float)AntAlgorithmManager.Instance.BestTourLength)) / ((float)AntAlgorithmManager.Instance.BestAlgorithmLength) * 100;
+                float improved = (((float)AntAlgorithmManager.Instance.BestAlgorithmLength) 
+                    - ((float)AntAlgorithmManager.Instance.BestTourLength)) / ((float)AntAlgorithmManager.Instance.BestAlgorithmLength) * 100;
                 Debug.Log("improved: " + improved);
 
                 GameObject improvedText = GameObject.Find("distance_text_3");
@@ -62,12 +65,7 @@ public class FollowMouse : MonoBehaviour
 				GameObject gameCanvas = GameObject.Find ("Canvas");
 				gameCanvas.GetComponent<Canvas> ().enabled = false;
 
-                StartCoroutine(HighScoreHandler.PostScoresAsync(
-					PlayerPrefs.GetString ("PlayerName"),
-                    (int) userDistance,
-					"CommentGoesHere"));
-
-                written = true;
+                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"), (int) userDistance, "CommentGoesHere"));
             }
 
             if (showLine)
