@@ -6,6 +6,7 @@ using AntAlgorithm.tools;
 using util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
@@ -13,6 +14,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     protected AntAlgorithmManager()
     {
+        //PlayerPrefs.DeleteAll();
         _initializationFinished = false;
         Cities = new List<City>();
         _userTour = new List<int>();
@@ -48,23 +50,33 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _initializationFinished = false;
         Debug.Log(string.Format("!Start called on {0}!", GetHashCode()));
         Debug.Log("--- FIND EDITION ---");
-        
-    #if UNITY_STANDALONE_WIN
+
+        #if UNITY_STANDALONE_WIN
         Debug.Log("Stand Alone Windows");
         Cities = TSPImporter.ImportTsp(TspFileToUse);
-    #endif
-        
-    #if UNITY_WEBGL
-        Debug.Log("WebGL");
+        Init();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        #endif
+
+        #if UNITY_WEBGL
         TSPImporter tsp = new TSPImporter();
-        tsp.ImportFromWeb(TspFileToUse);
+        StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
+        StartCoroutine(initWebGL(tsp));
+        
         Cities = tsp.Cities;
-    #endif
+        #endif
+    }
+
+    private IEnumerator initWebGL(TSPImporter tsp)
+    {
+
+        while (!tsp.loadingComplete)
+            yield return new WaitForSeconds(0.1f);
         Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name != "MainGameScreen")
@@ -94,6 +106,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         {
             _userTourCities.Clear();
             Debug.Log("\tUser tour cities cleared.");
+        }
+        if (Cities.Count == 0)
+        {
+            Debug.Log("\tNo Cities loaded.");
         }
 
         _remainingFood = new GameObject[Cities.Count];

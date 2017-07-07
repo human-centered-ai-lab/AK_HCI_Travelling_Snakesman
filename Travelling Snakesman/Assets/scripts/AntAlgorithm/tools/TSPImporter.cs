@@ -40,7 +40,7 @@ namespace AntAlgorithm.tools
             Cities = new List<City>();
             //this.TspWebDirectory = "http://www.andrejmueller.com/TSPLIB/"; // original
             TspWebDirectory = "http://localhost/tspLib/";
-            
+
         }
 
         public static List<City> ImportTsp(string fileName)
@@ -86,6 +86,25 @@ namespace AntAlgorithm.tools
             }
             Debug.Log(www.text);
             LoadCities(www.text);
+        }
+
+        public IEnumerator importTspFromWebWebGL(string tspFileToUse)
+        {
+            loadingComplete = false;
+            string filePath = TspWebDirectory + tspFileToUse;
+            WWW www = new WWW(filePath);
+            yield return www;
+
+            if (!string.IsNullOrEmpty(www.error))
+            {
+                Debug.Log(" ---- DOWNLOAD DONE with ERROR ----- ");
+                Debug.Log(www.error);
+                loadingComplete = true;
+            }
+            Debug.Log(www.text);
+            LoadCities(www.text);
+            loadingComplete = true;
+
         }
 
         public IEnumerator ImportTspFromWeb(string tspFileToUse)

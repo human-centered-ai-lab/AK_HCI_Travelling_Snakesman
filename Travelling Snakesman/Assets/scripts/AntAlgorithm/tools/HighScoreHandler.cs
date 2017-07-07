@@ -72,10 +72,10 @@ namespace AntAlgorithm.tools
         private const string SecretKey = "rLdZyTAJeynUh6JDR8Sut8Yj1sLXIPWO";
         private const string AddScoreURL = "http://www.andrejmueller.com/highscoresIML/addscore.php?";
         private const string HighscoreURL = "http://www.andrejmueller.com/highscoresIML/getscores.php?";
-        public static bool ReadHighScoresFinished { private set; get; }
-        public static List<HighScoreEntry> Result = new List<HighScoreEntry>();
+        public bool ReadHighScoresFinished = false;
+        public List<HighScoreEntry> Result = new List<HighScoreEntry>();
 
-        public static void PostScores(string userName,
+        public void PostScores(string userName,
             int score,
             string comment,
             string tsp = AntAlgorithmManager.TspFileName,
@@ -91,6 +91,9 @@ namespace AntAlgorithm.tools
             postValues["algorithm"] = algorithm.ToString();
             postValues["game"] = game;
             postValues["comment"] = comment;
+
+
+#if UNITY_STANDALONE_WIN
             var hsPost = WebFunctions.Post(url, postValues);
 
             print("HSPOST " + hsPost.url);
@@ -99,6 +102,11 @@ namespace AntAlgorithm.tools
             {
                 print("There was an error posting the high score: " + hsPost.error);
             }
+#endif
+
+#if UNITY_WEBGL
+            StartCoroutine(PostScoresAsync(userName,score,comment,tsp,algorithm,game) );
+#endif
         }
 
         public static IEnumerator PostScoresAsync(string userName, 
@@ -127,7 +135,41 @@ namespace AntAlgorithm.tools
             }
         }
 
-        public static List<HighScoreEntry> GetScores(string tspName = AntAlgorithmManager.TspFileName,
+
+        public IEnumerator ScoresWebGL()
+        {
+                ReadHighScoresFinished = false;
+
+                string tspName = AntAlgorithmManager.TspFileName;
+                string gameName = AntAlgorithmManager.GameName;
+                int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries;
+
+                var url = HighscoreURL
+                      + "tsp=" + WWW.EscapeURL(tspName)
+                      + "&num=" + numberOfEntries
+                      + "&game=" + WWW.EscapeURL(gameName);
+                WWW www = new WWW(url);
+
+                yield return www;
+
+                if (!string.IsNullOrEmpty(www.error))
+                {
+                    print("There was an error getting the high score: " + www.error);
+                }
+                else
+                {
+                    foreach (var line in www.text.Split(new[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        var entry = HighScoreEntry.Create(line);
+                        if (entry != null)
+                            Result.Add(entry);
+                    }
+                }
+                ReadHighScoresFinished = true;
+            
+        }
+
+        public List<HighScoreEntry> GetScores(string tspName = AntAlgorithmManager.TspFileName,
             string gameName = AntAlgorithmManager.GameName,
             int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries)
         {
@@ -139,6 +181,8 @@ namespace AntAlgorithm.tools
                       + "&num=" + numberOfEntries
                       + "&game=" + WWW.EscapeURL(gameName);
             print(url);
+
+
             WWW hsGet = WebFunctions.Get(url);
 
             if (!string.IsNullOrEmpty(hsGet.error))
@@ -157,37 +201,7 @@ namespace AntAlgorithm.tools
             ReadHighScoresFinished = true;
             return Result;
         }
-
-        public static IEnumerator GetScoresAsync(string tspName = AntAlgorithmManager.TspFileName,
-                                string gameName = AntAlgorithmManager.GameName, 
-                                int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries)
-        {
-            Debug.Log("Retrieving High Scores...");
-            ReadHighScoresFinished = false;
-            var url = HighscoreURL
-                      + "tsp=" + WWW.EscapeURL(tspName)
-                      + "&num=" + numberOfEntries
-                      + "&game=" + gameName;
-            print(url);
-            WWW hsGet = new WWW(url);
-            yield return hsGet;
-
-            if (!string.IsNullOrEmpty(hsGet.error))
-            {
-                print("There was an error getting the high score: " + hsGet.error);
-            }
-            else
-            {
-                print(hsGet.text);
-                foreach (var line in hsGet.text.Split(new []{"<br>"}, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    var entry = HighScoreEntry.Create(line);
-                    Result.Add(entry);
-                }
-            }
-            ReadHighScoresFinished = true;
-            yield return Result;
-        }
+        
 
         private static string Hash(string password)
         {

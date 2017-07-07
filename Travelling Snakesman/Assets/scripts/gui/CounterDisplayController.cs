@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿//using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,8 +20,8 @@ namespace gui
         // Update is called once per frame
         void Update ()
         {
-            Assert.NotNull(AntAlgorithmManager.Instance);
-            Assert.NotNull(AntAlgorithmManager.Instance.Cities);
+            //Assert.NotNull(AntAlgorithmManager.Instance);
+            //Assert.NotNull(AntAlgorithmManager.Instance.Cities);
 
             MaxFood = AntAlgorithmManager.Instance.Cities.Count;
             counterLabel.text = _foodEaten + " / " + MaxFood;

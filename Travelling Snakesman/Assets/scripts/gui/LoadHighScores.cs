@@ -14,18 +14,44 @@ namespace gui
         void Start ()
         {
             print("Waiting for High Scores...");
-            var scores = HighScoreHandler.GetScores();
+
+#if UNITY_STANDALONE_WIN
+            HighScoreHandler h = new HighScoreHandler();
+            List<HighScoreEntry> scores = h.GetScores();
+            setScores(scores);
+#endif
+
+
+#if UNITY_WEBGL
+
+            HighScoreHandler h = new HighScoreHandler();
+            StartCoroutine( h.ScoresWebGL() );
+            StartCoroutine(checkScores(h));
+#endif
+
+            
+        }
+
+        IEnumerator checkScores( HighScoreHandler h )
+        {
+            while (!h.ReadHighScoresFinished )
+                yield return new WaitForSeconds(0.1f);
+            setScores(h.Result);
+        }
+
+        void setScores( List<HighScoreEntry> scores )
+        {
             scores.Sort((e1, e2) => e1.Score.CompareTo(e2.Score));
 
             var text = "";
 
-            for(int i = 0; i < scores.Count; i++)
+            for (int i = 0; i < scores.Count; i++)
             {
                 var highScoreEntry = scores[i];
-                text += string.Format("{0}\t{1}\t\t{2}\n", (i+1), highScoreEntry.Name.PadLeft(20), highScoreEntry.Score);
+                text += string.Format("{0}\t{1}\t\t{2}\n", (i + 1), highScoreEntry.Name.PadLeft(20), highScoreEntry.Score);
             }
             text = text.TrimEnd('\n');
             highScoreText.text = text;
-        }        
+        }
     }
 }
