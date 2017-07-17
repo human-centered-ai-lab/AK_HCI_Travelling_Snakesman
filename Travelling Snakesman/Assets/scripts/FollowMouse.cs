@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class FollowMouse : MonoBehaviour
 {
-
     private bool showLine = false; 
 
 	public float Speed = 1.5f;
@@ -65,7 +64,7 @@ public class FollowMouse : MonoBehaviour
 				GameObject gameCanvas = GameObject.Find ("Canvas");
 				gameCanvas.GetComponent<Canvas> ().enabled = false;
 
-                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"), (int) userDistance, "CommentGoesHere"));
+                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"), (int) userDistance, "best tour user: " + (int)AntAlgorithmManager.Instance.BestTourLength + " # best tour algo: " + (int)AntAlgorithmManager.Instance.BestAlgorithmLength, PlayerPrefs.GetString("TspName")));
             }
 
             if (showLine)

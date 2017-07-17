@@ -24,10 +24,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     private AntAlgorithmSimple _antAlgorithm;
 
     public const string GameName = "TravellingSnakesman";
-    public const string TspFileName = "berlin522";
     public const int NumHighScoreEntries = 5;
 
-    private const string TspFileToUse = TspFileName + ".tsp";
+    private string TspFileToUse;
+    private string TspFileName;
     private GameObject[] _remainingFood;
     private readonly List<int> _userTour;
     private readonly List<City> _userTourCities;
@@ -45,8 +45,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         get { return _initializationFinished && GameObject.FindGameObjectsWithTag("Food").Length == 0; }
     }
 
+
     public void Start()
     {
+        TspFileName = PlayerPrefs.GetString("TspName");
         _initializationFinished = false;
         Debug.Log(string.Format("!Start called on {0}!", GetHashCode()));
         Debug.Log("--- FIND EDITION ---");
@@ -60,6 +62,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
         #if UNITY_WEBGL
         TSPImporter tsp = new TSPImporter();
+        Debug.Log("WebGL");
+        TspFileToUse = TspFileName + ".tsp";
         StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
         StartCoroutine(initWebGL(tsp));
         
@@ -75,7 +79,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
-
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {

@@ -70,15 +70,15 @@ namespace AntAlgorithm.tools
     public class HighScoreHandler : MonoBehaviour
     {
         private const string SecretKey = "rLdZyTAJeynUh6JDR8Sut8Yj1sLXIPWO";
-        private const string AddScoreURL = "http://www.andrejmueller.com/highscoresIML/addscore.php?";
-        private const string HighscoreURL = "http://www.andrejmueller.com/highscoresIML/getscores.php?";
+        private const string AddScoreURL = "http://iml.hci-kdd.org/serverscripts/addscore.php?";
+        private const string HighscoreURL = "http://iml.hci-kdd.org/serverscripts/getscores.php?";
         public bool ReadHighScoresFinished = false;
         public List<HighScoreEntry> Result = new List<HighScoreEntry>();
 
         public void PostScores(string userName,
             int score,
             string comment,
-            string tsp = AntAlgorithmManager.TspFileName,
+            string tsp,
             int algorithm = 1,
             string game = AntAlgorithmManager.GameName)
         {
@@ -105,14 +105,14 @@ namespace AntAlgorithm.tools
 #endif
 
 #if UNITY_WEBGL
-            StartCoroutine(PostScoresAsync(userName,score,comment,tsp,algorithm,game) );
+            StartCoroutine(PostScoresAsync(userName, score, comment, tsp, algorithm, game) );
 #endif
         }
 
         public static IEnumerator PostScoresAsync(string userName, 
                                                   int score,
                                                   string comment,
-                                                  string tsp = AntAlgorithmManager.TspFileName,
+                                                  string tsp,
                                                   int algorithm = 1,
                                                   string game = AntAlgorithmManager.GameName)
         {
@@ -139,8 +139,8 @@ namespace AntAlgorithm.tools
         public IEnumerator ScoresWebGL()
         {
                 ReadHighScoresFinished = false;
+                string tspName = PlayerPrefs.GetString("TspName");
 
-                string tspName = AntAlgorithmManager.TspFileName;
                 string gameName = AntAlgorithmManager.GameName;
                 int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries;
 
@@ -169,7 +169,7 @@ namespace AntAlgorithm.tools
             
         }
 
-        public List<HighScoreEntry> GetScores(string tspName = AntAlgorithmManager.TspFileName,
+        public List<HighScoreEntry> GetScores(string tspName,
             string gameName = AntAlgorithmManager.GameName,
             int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries)
         {
