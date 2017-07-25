@@ -31,9 +31,8 @@ public class FollowMouse : MonoBehaviour
 
     void Update()
     {
-		//don't rotate main camera
-		Camera.main.transform.rotation = Quaternion.identity;
-
+        //don't rotate main camera
+        Camera.main.transform.rotation = Quaternion.identity;
         if (AntAlgorithmManager.Instance.IsGameFinished)
         {
             Speed = 0;
@@ -74,6 +73,20 @@ public class FollowMouse : MonoBehaviour
             return;
         }
 
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Speed = 0;
+            GameObject gameEndedCanvas = GameObject.Find("QuitGameCanvas");
+            gameEndedCanvas.GetComponent<Canvas>().enabled = true;
+
+            GameObject gameCanvas = GameObject.Find("Canvas");
+            gameCanvas.GetComponent<Canvas>().enabled = false;
+
+            GameObject resumeGameButton = GameObject.Find("ResumeGameButton");
+            resumeGameButton.GetComponent<Button>().onClick.AddListener(resumeSpeed);
+
+        }
+
         if (showLine)
         {
             // set Positions of line
@@ -92,5 +105,17 @@ public class FollowMouse : MonoBehaviour
 
         float angle = Mathf.Atan2(_target.y - Camera.main.transform.position.y, _target.x - Camera.main.transform.position.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+    }
+
+    private void resumeSpeed()
+    {
+        Debug.Log("Escape");
+        Speed = 3f;
+
+        GameObject gameCanvas = GameObject.Find("Canvas");
+        gameCanvas.GetComponent<Canvas>().enabled = true;
+
+        GameObject gameEndedCanvas = GameObject.Find("QuitGameCanvas");
+        gameEndedCanvas.GetComponent<Canvas>().enabled = false;
     }
 }

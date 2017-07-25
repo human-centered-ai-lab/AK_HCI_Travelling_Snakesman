@@ -9,7 +9,7 @@ public class Buttonscript : MonoBehaviour
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);
     }
 
-    public void LoadLevelButtonAndSavePlayerName(string levelName)
+    public void LoadLevelButtonAndSavePlayerPrefs(string levelName)
     {
         string playerName = GameObject.Find("PlayerNameInputText").GetComponent<Text>().text;
 
