@@ -27,12 +27,12 @@ namespace gui
 
 #if UNITY_STANDALONE_WIN
             HighScoreHandler h = new HighScoreHandler();
-            List<HighScoreEntry> scores = h.GetScores();
+            List<HighScoreEntry> scores = h.GetScores(PlayerPrefs.GetString("TspName"), HighScoreHandler.ORDER_TYPE_ASC);
             setScores(scores);
 #endif
 
 
-#if UNITY_WEBGL
+#if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
             HighScoreHandler h = new HighScoreHandler();
             StartCoroutine(h.ScoresWebGL());
@@ -49,7 +49,7 @@ namespace gui
 
         void setScores( List<HighScoreEntry> scores )
         {
-            //scores.Sort((e1, e2) => e1.Score.CompareTo(e2.Score));
+            scores.Sort((e1, e2) => e1.Score.CompareTo(e2.Score));
        
             var text = "";
 

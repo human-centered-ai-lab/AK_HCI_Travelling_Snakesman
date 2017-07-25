@@ -27,10 +27,10 @@ namespace AntAlgorithm.tools
         public static HighScoreEntry Create(string line)
         {
             var entry = new HighScoreEntry();
-            foreach (var kvPair in line.Split(new []{" - "}, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var kvPair in line.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries))
             {
                 var splitPair = kvPair.Split(':');
-                if(splitPair.Length != 2)
+                if (splitPair.Length != 2)
                     continue;
                 var key = splitPair[0].Trim().ToLower();
                 var value = splitPair[1].Trim();
@@ -69,6 +69,7 @@ namespace AntAlgorithm.tools
 
     public class HighScoreHandler : MonoBehaviour
     {
+        public static int ORDER_TYPE_ASC = 1;
         private const string SecretKey = "rLdZyTAJeynUh6JDR8Sut8Yj1sLXIPWO";
         private const string AddScoreURL = "http://iml.hci-kdd.org/serverscripts/addscore.php?";
         private const string HighscoreURL = "http://iml.hci-kdd.org/serverscripts/getscores.php?";
@@ -104,12 +105,12 @@ namespace AntAlgorithm.tools
             }
 #endif
 
-#if UNITY_WEBGL
-            StartCoroutine(PostScoresAsync(userName, score, comment, tsp, algorithm, game) );
+#if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+            StartCoroutine(PostScoresAsync(userName, score, comment, tsp, algorithm, game));
 #endif
         }
 
-        public static IEnumerator PostScoresAsync(string userName, 
+        public static IEnumerator PostScoresAsync(string userName,
                                                   int score,
                                                   string comment,
                                                   string tsp,
@@ -122,7 +123,7 @@ namespace AntAlgorithm.tools
                              + "&tsp=" + WWW.EscapeURL(tsp)
                              + "&hash=" + WWW.EscapeURL(Hash(SecretKey))
                              + "&algorithm=" + algorithm
-                             + "&game="+ WWW.EscapeURL(game)
+                             + "&game=" + WWW.EscapeURL(game)
                              + "&comment=" + WWW.EscapeURL(comment);
             print(url);
             WWW hsPost = new WWW(url);
@@ -138,38 +139,40 @@ namespace AntAlgorithm.tools
 
         public IEnumerator ScoresWebGL()
         {
-                ReadHighScoresFinished = false;
-                string tspName = PlayerPrefs.GetString("TspName");
+            ReadHighScoresFinished = false;
+            string tspName = PlayerPrefs.GetString("TspName");
+            int orderType = ORDER_TYPE_ASC;
 
-                string gameName = AntAlgorithmManager.GameName;
-                int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries;
+            string gameName = AntAlgorithmManager.GameName;
+            int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries;
 
-                var url = HighscoreURL
-                      + "tsp=" + WWW.EscapeURL(tspName)
-                      + "&num=" + numberOfEntries
-                      + "&game=" + WWW.EscapeURL(gameName);
-                WWW www = new WWW(url);
+            var url = HighscoreURL
+                  + "tsp=" + WWW.EscapeURL(tspName)
+                  + "&num=" + numberOfEntries
+                  + "&game=" + WWW.EscapeURL(gameName)
+                  + "&order=" + orderType; 
+            WWW www = new WWW(url);
 
-                yield return www;
+            yield return www;
 
-                if (!string.IsNullOrEmpty(www.error))
+            if (!string.IsNullOrEmpty(www.error))
+            {
+                print("There was an error getting the high score: " + www.error);
+            }
+            else
+            {
+                foreach (var line in www.text.Split(new[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    print("There was an error getting the high score: " + www.error);
+                    var entry = HighScoreEntry.Create(line);
+                    if (entry != null)
+                        Result.Add(entry);
                 }
-                else
-                {
-                    foreach (var line in www.text.Split(new[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        var entry = HighScoreEntry.Create(line);
-                        if (entry != null)
-                            Result.Add(entry);
-                    }
-                }
-                ReadHighScoresFinished = true;
-            
+            }
+            ReadHighScoresFinished = true;
+
         }
 
-        public List<HighScoreEntry> GetScores(string tspName,
+        public List<HighScoreEntry> GetScores(string tspName, int orderType,
             string gameName = AntAlgorithmManager.GameName,
             int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries)
         {
@@ -179,7 +182,8 @@ namespace AntAlgorithm.tools
             var url = HighscoreURL
                       + "tsp=" + WWW.EscapeURL(tspName)
                       + "&num=" + numberOfEntries
-                      + "&game=" + WWW.EscapeURL(gameName);
+                      + "&game=" + WWW.EscapeURL(gameName)
+                      + "&order=" + orderType;
             print(url);
 
 
@@ -194,14 +198,14 @@ namespace AntAlgorithm.tools
                 foreach (var line in hsGet.text.Split(new[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var entry = HighScoreEntry.Create(line);
-                    if(entry != null)
+                    if (entry != null)
                         Result.Add(entry);
                 }
             }
             ReadHighScoresFinished = true;
             return Result;
         }
-        
+
 
         private static string Hash(string password)
         {

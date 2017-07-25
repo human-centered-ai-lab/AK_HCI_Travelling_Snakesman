@@ -53,16 +53,16 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         Debug.Log(string.Format("!Start called on {0}!", GetHashCode()));
         Debug.Log("--- FIND EDITION ---");
 
-        #if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN
         Debug.Log("Stand Alone Windows");
         Cities = TSPImporter.ImportTsp(TspFileToUse);
         Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
-        #endif
+#endif
 
-        #if UNITY_WEBGL
+#if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         TSPImporter tsp = new TSPImporter();
-        Debug.Log("WebGL");
+        Debug.Log("WebGL or Mobile");
         TspFileToUse = TspFileName + ".tsp";
         StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
         StartCoroutine(initWebGL(tsp));
