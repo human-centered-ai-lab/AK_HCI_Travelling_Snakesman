@@ -13,6 +13,7 @@ public class Buttonscript : MonoBehaviour
     {
         string playerName = GameObject.Find("PlayerNameInputText").GetComponent<Text>().text;
 
+        PlayerPrefs.DeleteKey(playerName);
         PlayerPrefs.SetString("PlayerName", playerName);
 
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);

@@ -1,4 +1,5 @@
 ﻿using AntAlgorithm.tools;
+using gui;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,9 @@ public class FollowMouse : MonoBehaviour
     private bool showLine = false; 
 
 	public float Speed = 1.5f;
-	private Vector3 _target;
+    private float tmpTime;
+
+    private Vector3 _target;
 
     private LineRenderer lineRenderer;
     public Material material;
@@ -75,6 +78,9 @@ public class FollowMouse : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Escape))
         {
+            GameObject timer = GameObject.Find("Timer");
+            tmpTime = timer.GetComponent<TimerDisplayController>().Time;
+
             Speed = 0;
             GameObject gameEndedCanvas = GameObject.Find("QuitGameCanvas");
             gameEndedCanvas.GetComponent<Canvas>().enabled = true;
@@ -84,6 +90,7 @@ public class FollowMouse : MonoBehaviour
 
             GameObject resumeGameButton = GameObject.Find("ResumeGameButton");
             resumeGameButton.GetComponent<Button>().onClick.AddListener(resumeSpeed);
+
 
         }
 
@@ -109,8 +116,10 @@ public class FollowMouse : MonoBehaviour
 
     private void resumeSpeed()
     {
-        Debug.Log("Escape");
         Speed = 3f;
+
+        GameObject timer = GameObject.Find("Timer");
+        timer.GetComponent<TimerDisplayController>().Time = tmpTime;
 
         GameObject gameCanvas = GameObject.Find("Canvas");
         gameCanvas.GetComponent<Canvas>().enabled = true;

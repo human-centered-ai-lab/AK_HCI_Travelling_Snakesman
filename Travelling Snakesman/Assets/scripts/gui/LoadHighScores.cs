@@ -10,6 +10,7 @@ namespace gui
     public class LoadHighScores : MonoBehaviour
     {
         [SerializeField] private Text highScoreText;
+        [SerializeField] private HighScoreHandler highScoreHandler;
         // Use this for initialization
         void Start ()
         {
@@ -25,19 +26,17 @@ namespace gui
             string tspName = menuOptions[menuIndex].text;
             PlayerPrefs.SetString("TspName", tspName);
 
-#if UNITY_STANDALONE_WIN
-            HighScoreHandler h = new HighScoreHandler();
-            List<HighScoreEntry> scores = h.GetScores(PlayerPrefs.GetString("TspName"), HighScoreHandler.ORDER_TYPE_ASC);
+            #if UNITY_STANDALONE_WIN
+            List<HighScoreEntry> scores = highScoreHandler.GetScores(PlayerPrefs.GetString("TspName"), HighScoreHandler.ORDER_TYPE_ASC);
             setScores(scores);
-#endif
+            #endif
 
 
-#if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+            #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
-            HighScoreHandler h = new HighScoreHandler();
-            StartCoroutine(h.ScoresWebGL());
-            StartCoroutine(checkScores(h));
-#endif           
+            StartCoroutine(highScoreHandler.ScoresWebGL());
+            StartCoroutine(checkScores(highScoreHandler));
+            #endif           
         }
 
         IEnumerator checkScores( HighScoreHandler h )

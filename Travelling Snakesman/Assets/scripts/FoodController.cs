@@ -28,11 +28,11 @@ public class FoodController : MonoBehaviour
         //initialize food objects with normalized values
         foreach (var city in cities)
         {
-            float xPos = (city.getXPosition() / (float)absoluteMaxX) * gameboardSize;
-            float yPos = (city.getYPosition() / (float)absoluteMaxY) * gameboardSize;
+            float xPos = (city.XPosition / (float)absoluteMaxX) * gameboardSize;
+            float yPos = (city.YPosition / (float)absoluteMaxY) * gameboardSize;
 			var pos = Quaternion.Euler (0, 0, angleToRotate) * new Vector3(xPos, yPos, 0);
 
-            Create(pos, city.getId());
+            Create(pos, city.Id);
         }
     }
 
@@ -82,8 +82,8 @@ public class FoodController : MonoBehaviour
 
         foreach (var city in cities)
         {
-            var x = city.getXPosition();
-            var y = city.getYPosition();
+            var x = city.XPosition;
+            var y = city.YPosition;
 
             if (x < minX)
                 minX = x;

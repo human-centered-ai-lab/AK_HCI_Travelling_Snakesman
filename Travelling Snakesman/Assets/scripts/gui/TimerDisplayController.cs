@@ -6,7 +6,7 @@ namespace gui
     public class TimerDisplayController : MonoBehaviour
     { 
         [SerializeField] private Text timerLabel;
-        private float _time;
+        public float Time { get; set; }
 
         // Update is called once per frame
         void Update ()
@@ -16,11 +16,10 @@ namespace gui
                 return;
             }
 
-            _time += Time.deltaTime;
+            Time += UnityEngine.Time.deltaTime;
 
-            var minutes = Mathf.Floor(_time / 60);
-            var seconds = _time % 60;
-            var fraction = _time * 1000 % 1000;
+            var minutes = Mathf.Floor(Time / 60);
+            var seconds = Time % 60;
 
             timerLabel.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         }

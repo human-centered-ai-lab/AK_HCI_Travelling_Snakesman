@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AntAlgorithm;
 using AntAlgorithm.tools;
 using util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using AntAlgorithms;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
@@ -21,7 +21,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         _userTourCities = new List<City>();
     }
 
-    private AntAlgorithmSimple _antAlgorithm;
+    private AntAlgorithmChooser _antAlgorithmChooser;
+    private AntAlgorithms.AntAlgorithm _antAlgorithm;
 
     public const string GameName = "TravellingSnakesman";
     public const int NumHighScoreEntries = 5;
@@ -36,7 +37,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public List<City> Cities { get; private set; }
 
-    public double BestTourLength { get { return _antAlgorithm.BestTourLength; } }
+    public double BestTourLength { get { return _antAlgorithm.TourLength; } }
 
     public double BestAlgorithmLength { get; private set; }
 
@@ -48,32 +49,36 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void Start()
     {
-        TspFileName = PlayerPrefs.GetString("TspName");
         _initializationFinished = false;
         Debug.Log(string.Format("!Start called on {0}!", GetHashCode()));
         Debug.Log("--- FIND EDITION ---");
 
-#if UNITY_STANDALONE_WIN
+        importTspAndInit();
+    }
+
+    private void importTspAndInit()
+    {
+        TspFileName = PlayerPrefs.GetString("TspName");
+        TspFileToUse = TspFileName + ".tsp";
+
+        #if UNITY_STANDALONE_WIN
         Debug.Log("Stand Alone Windows");
         Cities = TSPImporter.ImportTsp(TspFileToUse);
         Init();
         SceneManager.sceneLoaded += OnSceneLoaded;
-#endif
+        #endif
 
-#if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         TSPImporter tsp = new TSPImporter();
         Debug.Log("WebGL or Mobile");
-        TspFileToUse = TspFileName + ".tsp";
         StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
         StartCoroutine(initWebGL(tsp));
-        
         Cities = tsp.Cities;
         #endif
     }
 
     private IEnumerator initWebGL(TSPImporter tsp)
     {
-
         while (!tsp.loadingComplete)
             yield return new WaitForSeconds(0.1f);
         Init();
@@ -86,7 +91,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         {
             return;
         }
-        Init();
+
+        importTspAndInit();
     }
 
     public void Update()
@@ -116,14 +122,16 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         }
 
         _remainingFood = new GameObject[Cities.Count];
-        _antAlgorithm = transform.GetOrAddComponent<AntAlgorithmSimple>();
-        _antAlgorithm.SetCities(Cities);
+        _antAlgorithmChooser = new AntAlgorithmChooser(Mode.MinMaxAntSystem, 1, 5, 0.02, 51, -1, 0.05);
+        _antAlgorithm = _antAlgorithmChooser.Algorithm;
+        //_antAlgorithm = transform.GetOrAddComponent<AntAlgorithm>();
+        _antAlgorithm.Cities = (Cities);
         _antAlgorithm.Init();
         FoodController.InitializeFoodPositions(GameBoardSize);
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
         RunXIterations(52*5);
-        PrintBestTour("algo best tour: ");
+        PrintBestTour("algo best tour");
         BestAlgorithmLength = BestTourLength;
         _initializationFinished = true;
     }
@@ -139,7 +147,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void PrintBestTour(string str)
     {
-        _antAlgorithm.PrintBestTour(str);
+        _antAlgorithm.PrintBestTour(str, 1);
     }
 
     public void RegisterFood(int id, GameObject go)
@@ -190,7 +198,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         var lastIdx = _userTour.Count - 1;
         var cityA = _userTour[lastIdx];
         var cityB = _userTour[lastIdx - 1];
-        _antAlgorithm.Pheromones.IncreasePheromone(cityA, cityB, _antAlgorithm.Pheromones.GetPheromone(cityA, cityB));
+        _antAlgorithm.Pheromones.IncreasePheromoneAs(cityA, cityB, _antAlgorithm.Pheromones.GetPheromone(cityA, cityB));
 		//_antAlgorithm.Pheromones.SetPheromone(cityA, cityB, 0.7);
     }
 
@@ -240,8 +248,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             City city1 = _userTourCities[i];
             City city2 = _userTourCities[i + 1];
 
-            Vector2 city1Pos = new Vector2(city1.getXPosition(), city1.getYPosition());
-            Vector2 city2Pos = new Vector2(city2.getXPosition(), city2.getYPosition());
+            Vector2 city1Pos = new Vector2(city1.XPosition, city1.YPosition);
+            Vector2 city2Pos = new Vector2(city2.XPosition, city2.YPosition);
 
             distance += Vector2.Distance(city1Pos, city2Pos);
         }
@@ -260,8 +268,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             City city1 = cities[i];
             City city2 = cities[i + 1];
 
-            Vector2 city1Pos = new Vector2(city1.getXPosition(), city1.getYPosition());
-            Vector2 city2Pos = new Vector2(city2.getXPosition(), city2.getYPosition());
+            Vector2 city1Pos = new Vector2(city1.XPosition, city1.YPosition);
+            Vector2 city2Pos = new Vector2(city2.XPosition, city2.YPosition);
 
             distance += Vector2.Distance(city1Pos, city2Pos);
         }

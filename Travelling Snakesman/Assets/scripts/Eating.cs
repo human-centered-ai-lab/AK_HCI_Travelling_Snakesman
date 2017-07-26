@@ -69,8 +69,8 @@ public class Eating : MonoBehaviour
         int.TryParse(food.name.Substring(food.name.LastIndexOf('_') + 1), out cityID);
         //Debug.Log ("cityID: " + cityID);
         //Debug.Log("food.transform.position: " + food.transform.position);
-        AntAlgorithm.City city = AntAlgorithmManager.Instance.Cities[cityID];
-        Vector3 realCityCoordinates = new Vector3(city.getXPosition(), city.getYPosition(), 0);
+        City city = AntAlgorithmManager.Instance.Cities[cityID];
+        Vector3 realCityCoordinates = new Vector3(city.XPosition, city.YPosition, 0);
         //Debug.Log ("REAL city coordinates: " + realCityCoordinates);
 
         return realCityCoordinates;

@@ -74,7 +74,7 @@ namespace AntAlgorithm.tools
         private const string AddScoreURL = "http://iml.hci-kdd.org/serverscripts/addscore.php?";
         private const string HighscoreURL = "http://iml.hci-kdd.org/serverscripts/getscores.php?";
         public bool ReadHighScoresFinished = false;
-        public List<HighScoreEntry> Result = new List<HighScoreEntry>();
+        public List<HighScoreEntry> Result;
 
         public void PostScores(string userName,
             int score,
@@ -139,6 +139,7 @@ namespace AntAlgorithm.tools
 
         public IEnumerator ScoresWebGL()
         {
+            Result = new List<HighScoreEntry>();
             ReadHighScoresFinished = false;
             string tspName = PlayerPrefs.GetString("TspName");
             int orderType = ORDER_TYPE_ASC;
@@ -178,7 +179,7 @@ namespace AntAlgorithm.tools
         {
             Debug.Log("Retrieving High Scores...");
             ReadHighScoresFinished = false;
-            Result.Clear();
+            Result = new List<HighScoreEntry>();
             var url = HighscoreURL
                       + "tsp=" + WWW.EscapeURL(tspName)
                       + "&num=" + numberOfEntries
