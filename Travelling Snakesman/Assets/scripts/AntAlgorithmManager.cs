@@ -130,7 +130,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         FoodController.InitializeFoodPositions(GameBoardSize);
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
-        RunXIterations(52*5);
+        RunXIterations(Cities.Count * 5);
         PrintBestTour("algo best tour");
         BestAlgorithmLength = BestTourLength;
         _initializationFinished = true;
@@ -175,16 +175,16 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
         //Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
 
-        for (int idx = 0; idx < pheromones.Length; idx++)
+        for (int i = 0; i < pheromones.Length; i++)
         {
-            if(_remainingFood[idx] == null)
+            if(_remainingFood[i] == null)
                 continue;
-			_remainingFood[idx].GetComponent<FoodController>().Redye(GetRedyeFactor(min, pheromones[idx], max));
+			_remainingFood[i].GetComponent<FoodController>().Redye(GetRedyeFactor(min, pheromones[i], max));
             
             // set nextBestFoodPosition because of maximum of pheromones
-            if (Math.Abs(max - pheromones[idx]) < 1e-6 * max)
+            if (Math.Abs(max - pheromones[i]) < 1e-6 * max)
             {
-                _nextBestFoodPosition = _remainingFood[idx].transform.position;
+                _nextBestFoodPosition = _remainingFood[i].transform.position;
             }
         }
 
