@@ -38,14 +38,20 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     public List<City> Cities { get; private set; }
 
     public double BestTourLength { get { return _antAlgorithm.TourLength; } }
+    public List<int> BestTour { get { return _antAlgorithm.BestTour; } }
+
+    // TODO: bestIterations
+    public int BestAlgorithmIteration;
+    public int BestUserIteration;
 
     public double BestAlgorithmLength { get; private set; }
+    public string BestAlgorithmTour { get; private set; }
+
 
     public bool IsGameFinished
     {
         get { return _initializationFinished && GameObject.FindGameObjectsWithTag("Food").Length == 0; }
     }
-
 
     public void Start()
     {
@@ -133,7 +139,9 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         RunXIterations(Cities.Count * 5);
         PrintBestTour("algo best tour");
         BestAlgorithmLength = BestTourLength;
+        BestAlgorithmTour = TourToString(BestTour);
         _initializationFinished = true;
+        _antAlgorithm.Init();
     }
 
     public void RunXIterations(int numIter)
@@ -187,6 +195,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
                 _nextBestFoodPosition = _remainingFood[i].transform.position;
             }
         }
+        //Debug.Log(_antAlgorithm.Pheromones.ToString);
 
         UpdatePheromones();
         RunXIterations(5);
@@ -275,6 +284,22 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         }
 
         return distance;
+    }
+
+    public string TourToString(List<int> tour)
+    {
+        Debug.Log("TourToString. " + tour.ToString());
+
+        string tourString = "";
+        for (int i = 0; i < tour.Count; i++)
+        {
+            if(i == (tour.Count - 1))
+                tourString += tour[i];
+            else
+                tourString += tour[i] + "-";
+        }
+
+        return tourString;
     }
 
     #endregion

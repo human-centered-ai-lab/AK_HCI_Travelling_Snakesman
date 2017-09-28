@@ -43,15 +43,21 @@ public class FollowMouse : MonoBehaviour
             {
                 written = true;
 
-                double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance();
-				Debug.Log("[user distance: " + userDistance);
-                AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
+                //double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance();
+                double bestUserDistance = AntAlgorithmManager.Instance.BestTourLength;
+                double bestAlgorithmDistance = AntAlgorithmManager.Instance.BestAlgorithmLength;
 
-				GameObject bestTourUserText = GameObject.Find ("distance_text_1");
-                bestTourUserText.GetComponent<Text> ().text = ((int)AntAlgorithmManager.Instance.BestTourLength).ToString();
+                string bestUserTour = AntAlgorithmManager.Instance.TourToString(AntAlgorithmManager.Instance.BestTour);
+                string bestAlgoritmTour = AntAlgorithmManager.Instance.BestAlgorithmTour;
+
+                //Debug.Log("[user distance: " + userDistance);
+                //AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
+
+                GameObject bestTourUserText = GameObject.Find ("distance_text_1");
+                bestTourUserText.GetComponent<Text> ().text = bestUserDistance.ToString();
 
                 GameObject bestTourText = GameObject.Find("distance_text_2");
-                bestTourText.GetComponent<Text>().text = ((int)AntAlgorithmManager.Instance.BestAlgorithmLength).ToString();
+                bestTourText.GetComponent<Text>().text = bestAlgorithmDistance.ToString();
 
                 float improved = (((float)AntAlgorithmManager.Instance.BestAlgorithmLength) 
                     - ((float)AntAlgorithmManager.Instance.BestTourLength)) / ((float)AntAlgorithmManager.Instance.BestAlgorithmLength) * 100;
@@ -66,7 +72,7 @@ public class FollowMouse : MonoBehaviour
 				GameObject gameCanvas = GameObject.Find ("Canvas");
 				gameCanvas.GetComponent<Canvas> ().enabled = false;
 
-                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"), (int) userDistance, "best tour user: " + (int)AntAlgorithmManager.Instance.BestTourLength + " # best tour algo: " + (int)AntAlgorithmManager.Instance.BestAlgorithmLength, PlayerPrefs.GetString("TspName")));
+                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"),  PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, 0, bestAlgoritmTour, bestUserDistance, 0, bestUserTour));
             }
 
             if (showLine)

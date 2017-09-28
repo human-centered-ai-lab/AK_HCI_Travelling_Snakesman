@@ -48,7 +48,7 @@ namespace gui
 
         void setScores( List<HighScoreEntry> scores )
         {
-            scores.Sort((e1, e2) => e1.Score.CompareTo(e2.Score));
+            scores.Sort((e1, e2) => e1.UserScore.CompareTo(e2.UserScore));
        
             var text = "";
 
@@ -56,7 +56,7 @@ namespace gui
             {
                 
                 var highScoreEntry = scores[i];
-                text += string.Format("{0}\t{1}\t\t{2}\n", (i + 1), highScoreEntry.Name, highScoreEntry.Score);
+                text += string.Format("{0}\t{1}\t\t{2}\n", (i + 1), highScoreEntry.Name, highScoreEntry.UserScore);
             }
             text = text.TrimEnd('\n');
             highScoreText.text = text;

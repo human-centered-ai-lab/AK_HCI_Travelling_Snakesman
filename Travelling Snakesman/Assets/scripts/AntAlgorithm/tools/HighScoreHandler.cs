@@ -12,7 +12,8 @@ namespace AntAlgorithm.tools
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
-        public int Score { get; private set; }
+        public int UserScore { get; private set; }
+        public int AlgoScore { get; private set; }
 
         public string Comment { get; private set; }
 
@@ -20,7 +21,8 @@ namespace AntAlgorithm.tools
         {
             Id = -1;
             Name = null;
-            Score = -1;
+            UserScore = -1;
+            AlgoScore = -1;
             Comment = null;
         }
 
@@ -39,15 +41,21 @@ namespace AntAlgorithm.tools
                     case "id":
                         entry.Id = int.Parse(value);
                         break;
+                    case "algoscore":
+                        entry.AlgoScore = int.Parse(value);
+                        break;
+                    case "userscore":
+                        entry.UserScore = int.Parse(value);
+                        break;
                     case "name":
                         entry.Name = value;
                         break;
-                    case "score":
-                        entry.Score = int.Parse(value);
-                        break;
-                    case "comment":
-                        entry.Comment = value.Trim();
-                        break;
+                        /*  case "score":
+                              entry.Score = int.Parse(value);
+                              break;
+                          case "comment":
+                              entry.Comment = value.Trim();
+                              break;*/
                 }
             }
             return entry.IsInitialized() ? entry : null;
@@ -55,14 +63,14 @@ namespace AntAlgorithm.tools
 
         public override string ToString()
         {
-            return string.Format("{0} - {1}", Name, Score);
+            return string.Format("{0} - {1}", Name, UserScore);
         }
 
         public bool IsInitialized()
         {
             return Id != -1
                    && Name != null
-                   && Score != -1;
+                   && UserScore != -1;
         }
     }
 
@@ -77,22 +85,28 @@ namespace AntAlgorithm.tools
         public List<HighScoreEntry> Result;
 
         public void PostScores(string userName,
-            int score,
-            string comment,
-            string tsp,
-            int algorithm = 1,
-            string game = AntAlgorithmManager.GameName)
+            string tspName,
+            double algoScore,
+            int algoBestIteration,
+            string algoTour,
+            double userScore,
+            int userBestIteration,
+            string userTour)
         {
             string url = AddScoreURL.TrimEnd('?');
             var postValues = new Dictionary<string, string>();
             postValues["name"] = userName;
-            postValues["score"] = score.ToString();
-            postValues["tsp"] = tsp;
-            postValues["hash"] = Hash(SecretKey);
-            postValues["algorithm"] = algorithm.ToString();
-            postValues["game"] = game;
-            postValues["comment"] = comment;
+            postValues["tspname"] = tspName;
 
+            postValues["algoscore"] = algoScore.ToString();
+            postValues["algobestiteration"] = algoBestIteration.ToString();
+            postValues["algotour"] = algoTour;
+
+            postValues["userscore"] = userScore.ToString();
+            postValues["userbestiteration"] = userBestIteration.ToString();
+            postValues["usertour"] = userTour;
+
+            postValues["hash"] = Hash(SecretKey);
 
 #if UNITY_STANDALONE_WIN
             var hsPost = WebFunctions.Post(url, postValues);
@@ -106,25 +120,31 @@ namespace AntAlgorithm.tools
 #endif
 
 #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-            StartCoroutine(PostScoresAsync(userName, score, comment, tsp, algorithm, game));
+            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour));
 #endif
         }
 
         public static IEnumerator PostScoresAsync(string userName,
-                                                  int score,
-                                                  string comment,
-                                                  string tsp,
-                                                  int algorithm = 1,
-                                                  string game = AntAlgorithmManager.GameName)
+                                                  string tspName,
+                                                  double algoScore,
+                                                  int algoBestIteration,
+                                                  string algoBestTour,
+                                                  double userScore,
+                                                  int userBestIteration,
+                                                  string userBestTour
+                                                  )
         {
             string url = AddScoreURL
                              + "name=" + WWW.EscapeURL(userName)
-                             + "&score=" + score
-                             + "&tsp=" + WWW.EscapeURL(tsp)
+                             + "&userscore=" + userScore
+                             + "&tspname=" + WWW.EscapeURL(tspName)
                              + "&hash=" + WWW.EscapeURL(Hash(SecretKey))
-                             + "&algorithm=" + algorithm
-                             + "&game=" + WWW.EscapeURL(game)
-                             + "&comment=" + WWW.EscapeURL(comment);
+                             + "&userbestiteration=" + userBestIteration
+                             + "&usertour=" + userBestTour
+                             + "&algoscore=" + algoScore
+                             + "&algobestiteration=" + algoBestIteration
+                             + "&algotour=" + algoBestTour;
+                          
             print(url);
             WWW hsPost = new WWW(url);
             yield return hsPost;
@@ -136,7 +156,6 @@ namespace AntAlgorithm.tools
             }
         }
 
-
         public IEnumerator ScoresWebGL()
         {
             Result = new List<HighScoreEntry>();
@@ -144,14 +163,12 @@ namespace AntAlgorithm.tools
             string tspName = PlayerPrefs.GetString("TspName");
             int orderType = ORDER_TYPE_ASC;
 
-            string gameName = AntAlgorithmManager.GameName;
             int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries;
 
             var url = HighscoreURL
                   + "tsp=" + WWW.EscapeURL(tspName)
                   + "&num=" + numberOfEntries
-                  + "&game=" + WWW.EscapeURL(gameName)
-                  + "&order=" + orderType; 
+                  + "&order=" + orderType;
             WWW www = new WWW(url);
 
             yield return www;
@@ -183,7 +200,6 @@ namespace AntAlgorithm.tools
             var url = HighscoreURL
                       + "tsp=" + WWW.EscapeURL(tspName)
                       + "&num=" + numberOfEntries
-                      + "&game=" + WWW.EscapeURL(gameName)
                       + "&order=" + orderType;
             print(url);
 
