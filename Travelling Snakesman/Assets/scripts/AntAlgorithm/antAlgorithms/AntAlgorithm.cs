@@ -32,6 +32,7 @@ namespace AntAlgorithms
 
         //helper
         protected int algStep;
+        protected int iteration;
 
         // inits step of the algorithm
         // usage: use it once for initialization
@@ -68,6 +69,7 @@ namespace AntAlgorithms
                 for (int i = 0; i < bestAnt.Tour.Count; i++)
                 {
                     BestTour.Add(bestAnt.Tour[i]);
+                    BestIteration = iteration;
                 }
                 return true;
             }
@@ -92,5 +94,8 @@ namespace AntAlgorithms
         public double TourLength { get; protected set; }
 
         public List<int> BestTour { get; protected set; }
+
+        public int BestIteration { get; protected set; }
+
     }
 }

@@ -8,56 +8,25 @@ using util;
 
 namespace AntAlgorithm.tools
 {
+    [Serializable]
     public class HighScoreEntry
     {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
-        public int UserScore { get; private set; }
-        public int AlgoScore { get; private set; }
-
-        public string Comment { get; private set; }
+        public string ID;
+        public string Name;
+        public double UserScore;
+        public double AlgoScore;
 
         private HighScoreEntry()
         {
-            Id = -1;
+            ID = null;
             Name = null;
             UserScore = -1;
             AlgoScore = -1;
-            Comment = null;
         }
 
         public static HighScoreEntry Create(string line)
         {
-            var entry = new HighScoreEntry();
-            foreach (var kvPair in line.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var splitPair = kvPair.Split(':');
-                if (splitPair.Length != 2)
-                    continue;
-                var key = splitPair[0].Trim().ToLower();
-                var value = splitPair[1].Trim();
-                switch (key)
-                {
-                    case "id":
-                        entry.Id = int.Parse(value);
-                        break;
-                    case "algoscore":
-                        entry.AlgoScore = int.Parse(value);
-                        break;
-                    case "userscore":
-                        entry.UserScore = int.Parse(value);
-                        break;
-                    case "name":
-                        entry.Name = value;
-                        break;
-                        /*  case "score":
-                              entry.Score = int.Parse(value);
-                              break;
-                          case "comment":
-                              entry.Comment = value.Trim();
-                              break;*/
-                }
-            }
+            HighScoreEntry entry = JsonUtility.FromJson<HighScoreEntry>(line);
             return entry.IsInitialized() ? entry : null;
         }
 
@@ -68,7 +37,7 @@ namespace AntAlgorithm.tools
 
         public bool IsInitialized()
         {
-            return Id != -1
+            return ID != null
                    && Name != null
                    && UserScore != -1;
         }
@@ -182,8 +151,12 @@ namespace AntAlgorithm.tools
                 foreach (var line in www.text.Split(new[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var entry = HighScoreEntry.Create(line);
+                    Debug.Log(entry);
+
                     if (entry != null)
+                    {
                         Result.Add(entry);
+                    }
                 }
             }
             ReadHighScoresFinished = true;
@@ -216,7 +189,9 @@ namespace AntAlgorithm.tools
                 {
                     var entry = HighScoreEntry.Create(line);
                     if (entry != null)
+                    {
                         Result.Add(entry);
+                    }
                 }
             }
             ReadHighScoresFinished = true;

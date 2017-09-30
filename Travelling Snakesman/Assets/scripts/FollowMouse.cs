@@ -44,11 +44,13 @@ public class FollowMouse : MonoBehaviour
                 written = true;
 
                 //double userDistance = AntAlgorithmManager.Instance.CalcOverallUserDistance();
-                double bestUserDistance = AntAlgorithmManager.Instance.BestTourLength;
                 double bestAlgorithmDistance = AntAlgorithmManager.Instance.BestAlgorithmLength;
-
-                string bestUserTour = AntAlgorithmManager.Instance.TourToString(AntAlgorithmManager.Instance.BestTour);
+                int bestAlgorithIteration = AntAlgorithmManager.Instance.BestAlgorithmIteration;
                 string bestAlgoritmTour = AntAlgorithmManager.Instance.BestAlgorithmTour;
+
+                double bestUserDistance = AntAlgorithmManager.Instance.BestTourLength;
+                int bestUserIteration = AntAlgorithmManager.Instance.BestItertation;
+                string bestUserTour = AntAlgorithmManager.Instance.TourToString(AntAlgorithmManager.Instance.BestTour);
 
                 //Debug.Log("[user distance: " + userDistance);
                 //AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
@@ -72,7 +74,7 @@ public class FollowMouse : MonoBehaviour
 				GameObject gameCanvas = GameObject.Find ("Canvas");
 				gameCanvas.GetComponent<Canvas> ().enabled = false;
 
-                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"),  PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, 0, bestAlgoritmTour, bestUserDistance, 0, bestUserTour));
+                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"),  PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, bestAlgorithIteration, bestAlgoritmTour, bestUserDistance, bestUserIteration, bestUserTour));
             }
 
             if (showLine)

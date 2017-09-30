@@ -123,7 +123,7 @@ namespace AntAlgorithm.tools
             while (!www.downloadHandler.isDone)
                 yield return new WaitForEndOfFrame();
             
-            if (www.isError)
+            if (www.isNetworkError)
             {
                 Debug.Log(" ---- DOWNLOAD DONE with ERROR ----- ");
                 Debug.Log(www.error);
@@ -144,8 +144,9 @@ namespace AntAlgorithm.tools
             bool pointArea = false;
             int count = 0;
 
-            foreach (string line in result.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string line in result.Split('\n'))
             {
+
                 if (string.Compare(line.Trim(), PointSection.Trim(), StringComparison.OrdinalIgnoreCase) == 0) // equal - fix because of unprintable sign at end of "line"
                 {
                     pointArea = true;

@@ -39,14 +39,11 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public double BestTourLength { get { return _antAlgorithm.TourLength; } }
     public List<int> BestTour { get { return _antAlgorithm.BestTour; } }
+    public int BestItertation { get { return _antAlgorithm.BestIteration; } }
 
-    // TODO: bestIterations
-    public int BestAlgorithmIteration;
-    public int BestUserIteration;
-
+    public int BestAlgorithmIteration { get; private set; }
     public double BestAlgorithmLength { get; private set; }
     public string BestAlgorithmTour { get; private set; }
-
 
     public bool IsGameFinished
     {
@@ -140,6 +137,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         PrintBestTour("algo best tour");
         BestAlgorithmLength = BestTourLength;
         BestAlgorithmTour = TourToString(BestTour);
+        BestAlgorithmIteration = BestItertation;
         _initializationFinished = true;
         _antAlgorithm.Init();
     }

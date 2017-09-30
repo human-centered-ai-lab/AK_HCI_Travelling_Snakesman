@@ -53,8 +53,7 @@ namespace gui
             var text = "";
 
             for (int i = 0; i < scores.Count; i++)
-            {
-                
+            {               
                 var highScoreEntry = scores[i];
                 text += string.Format("{0}\t{1}\t\t{2}\n", (i + 1), highScoreEntry.Name, highScoreEntry.UserScore);
             }

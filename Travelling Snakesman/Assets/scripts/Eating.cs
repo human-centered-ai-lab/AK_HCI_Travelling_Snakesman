@@ -34,7 +34,6 @@ public class Eating : MonoBehaviour
         Vector3 realCityCoordinates = getRealCityCoordinatesOfFoodGameObject(other);
 
         //_rangeDisplayController.UpdateRange(other.gameObject.transform.position); //gameObject coordinates
-        _rangeDisplayController.UpdateRange(realCityCoordinates); //real city coordinates
 
         _counterDisplayController.UpdateRange(_foodEated);
 
