@@ -24,7 +24,11 @@ namespace gui
                 {
                     rangeLabel.color = Color.green;
                 }
-                else if (AntAlgorithmManager.Instance.BestTourLength > AntAlgorithmManager.Instance.BestAlgorithmLength)
+                else if (AntAlgorithmManager.Instance.BestTourLength > AntAlgorithmManager.Instance.BestAlgorithmLength && AntAlgorithmManager.Instance.BestTourLength < AntAlgorithmManager.Instance.BestAlgorithmLength + (AntAlgorithmManager.Instance.BestAlgorithmLength / 50))
+                {
+                    rangeLabel.color = Color.yellow;
+                }
+                else if (AntAlgorithmManager.Instance.BestTourLength > AntAlgorithmManager.Instance.BestAlgorithmLength + (AntAlgorithmManager.Instance.BestAlgorithmLength / 50))
                 {
                     rangeLabel.color = Color.red;
                 }

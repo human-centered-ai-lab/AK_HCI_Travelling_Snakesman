@@ -117,7 +117,6 @@ namespace AntAlgorithm.tools
             print(url);
             WWW hsPost = new WWW(url);
             yield return hsPost;
-            print("HSPOST " + hsPost.url);
 
             if (!string.IsNullOrEmpty(hsPost.error))
             {
