@@ -123,7 +123,7 @@ namespace AntAlgorithm.tools
             while (!www.downloadHandler.isDone)
                 yield return new WaitForEndOfFrame();
             
-            if (www.isNetworkError)
+            if (www.isError)
             {
                 Debug.Log(" ---- DOWNLOAD DONE with ERROR ----- ");
                 Debug.Log(www.error);

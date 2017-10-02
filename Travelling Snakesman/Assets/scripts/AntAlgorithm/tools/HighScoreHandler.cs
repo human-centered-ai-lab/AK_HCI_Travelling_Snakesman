@@ -150,7 +150,6 @@ namespace AntAlgorithm.tools
                 foreach (var line in www.text.Split(new[] { "<br>" }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var entry = HighScoreEntry.Create(line);
-                    Debug.Log(entry);
 
                     if (entry != null)
                     {

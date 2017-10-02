@@ -50,41 +50,12 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         get { return _initializationFinished && GameObject.FindGameObjectsWithTag("Food").Length == 0; }
     }
 
-    public void Start()
+    private void Start()
     {
         _initializationFinished = false;
         Debug.Log(string.Format("!Start called on {0}!", GetHashCode()));
         Debug.Log("--- FIND EDITION ---");
-
-        importTspAndInit();
-    }
-
-    private void importTspAndInit()
-    {
-        TspFileName = PlayerPrefs.GetString("TspName");
-        TspFileToUse = TspFileName + ".tsp";
-
-        #if UNITY_STANDALONE_WIN
-        Debug.Log("Stand Alone Windows");
-        Cities = TSPImporter.ImportTsp(TspFileToUse);
-        Init();
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        #endif
-
-        #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-        TSPImporter tsp = new TSPImporter();
-        Debug.Log("WebGL or Mobile");
-        StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
-        StartCoroutine(initWebGL(tsp));
-        Cities = tsp.Cities;
-        #endif
-    }
-
-    private IEnumerator initWebGL(TSPImporter tsp)
-    {
-        while (!tsp.loadingComplete)
-            yield return new WaitForSeconds(0.1f);
-        Init();
+        InitTSP();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -94,9 +65,38 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         {
             return;
         }
-
-        importTspAndInit();
+        InitTSP();
     }
+
+    public void InitTSP()
+    {
+        TspFileName = PlayerPrefs.GetString("TspName");
+        TspFileToUse = TspFileName + ".tsp";
+
+    #if UNITY_STANDALONE_WIN
+        Debug.Log("Stand Alone Windows");
+        Cities = TSPImporter.ImportTsp(TspFileToUse);
+        Init();
+    #endif
+
+    #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        TSPImporter tsp = new TSPImporter();
+        Debug.Log("WebGL or Mobile");
+        StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
+        StartCoroutine(initWebGL(tsp));
+        Cities = tsp.Cities;
+    #endif
+
+
+    }
+
+    private IEnumerator InitWebGL(TSPImporter tsp)
+    {
+        while (!tsp.loadingComplete)
+            yield return new WaitForSeconds(0.1f);
+        Init();
+    }
+
 
     public void Update()
     {
@@ -286,8 +286,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public string TourToString(List<int> tour)
     {
-        Debug.Log("TourToString. " + tour.ToString());
-
         string tourString = "";
         for (int i = 0; i < tour.Count; i++)
         {

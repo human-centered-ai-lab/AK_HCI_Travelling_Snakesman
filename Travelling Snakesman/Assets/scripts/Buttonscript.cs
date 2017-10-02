@@ -15,7 +15,6 @@ public class Buttonscript : MonoBehaviour
 
         PlayerPrefs.DeleteKey(playerName);
         PlayerPrefs.SetString("PlayerName", playerName);
-
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);
     }
 }

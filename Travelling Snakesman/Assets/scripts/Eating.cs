@@ -8,7 +8,7 @@ public class Eating : MonoBehaviour
     private int currentSnakeLength = 3;
     private GameObject lastSnakeBodyPart;
     private AudioSource audioSource;
-    private int _foodEated;
+    private int _foodEaten;
 
     private RangeDisplayController _rangeDisplayController;
     private CounterDisplayController _counterDisplayController;
@@ -19,7 +19,7 @@ public class Eating : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         _rangeDisplayController = GameObject.FindGameObjectWithTag("RangeDisplay").GetComponent<RangeDisplayController>();
         _counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
-        _foodEated = 0;
+        _foodEaten = 0;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -29,13 +29,13 @@ public class Eating : MonoBehaviour
             return;
         }
 
-        _foodEated++;
+        _foodEaten++;
 
         Vector3 realCityCoordinates = getRealCityCoordinatesOfFoodGameObject(other);
 
         //_rangeDisplayController.UpdateRange(other.gameObject.transform.position); //gameObject coordinates
 
-        _counterDisplayController.UpdateRange(_foodEated);
+        _counterDisplayController.UpdateRange(_foodEaten);
 
         Destroy(other.gameObject);
 
