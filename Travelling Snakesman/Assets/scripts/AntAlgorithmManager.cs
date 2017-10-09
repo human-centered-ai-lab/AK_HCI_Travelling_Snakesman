@@ -83,7 +83,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         TSPImporter tsp = new TSPImporter();
         Debug.Log("WebGL or Mobile");
         StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
-        StartCoroutine(initWebGL(tsp));
+        StartCoroutine(InitWebGL(tsp));
         Cities = tsp.Cities;
     #endif
 
