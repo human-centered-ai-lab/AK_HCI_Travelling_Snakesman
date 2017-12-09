@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace gui
@@ -33,7 +34,7 @@ namespace gui
                     rangeLabel.color = Color.red;
                 }
 
-            rangeLabel.text = "Score: " + AntAlgorithmManager.Instance.BestTourLength;
+            rangeLabel.text = "Score: " + String.Format("{0:0.00}", AntAlgorithmManager.Instance.BestTourLength);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AntAlgorithm.tools;
 using gui;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -56,10 +57,10 @@ public class FollowMouse : MonoBehaviour
                 //AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
 
                 GameObject bestTourUserText = GameObject.Find ("distance_text_1");
-                bestTourUserText.GetComponent<Text> ().text = bestUserDistance.ToString();
+                bestTourUserText.GetComponent<Text> ().text = String.Format("{0:0.00}", bestUserDistance).ToString();
 
                 GameObject bestTourText = GameObject.Find("distance_text_2");
-                bestTourText.GetComponent<Text>().text = bestAlgorithmDistance.ToString();
+                bestTourText.GetComponent<Text>().text = String.Format("{0:0.00}", bestAlgorithmDistance).ToString();
 
                 float improved = (((float)AntAlgorithmManager.Instance.BestAlgorithmLength) 
                     - ((float)AntAlgorithmManager.Instance.BestTourLength)) / ((float)AntAlgorithmManager.Instance.BestAlgorithmLength) * 100;
