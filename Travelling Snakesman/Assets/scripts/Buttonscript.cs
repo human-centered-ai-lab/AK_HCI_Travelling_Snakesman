@@ -17,4 +17,8 @@ public class Buttonscript : MonoBehaviour
         PlayerPrefs.SetString("PlayerName", playerName);
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);
     }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }
