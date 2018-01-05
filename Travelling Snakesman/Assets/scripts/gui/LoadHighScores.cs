@@ -12,7 +12,7 @@ namespace gui
         [SerializeField] private Text highScoreText;
         [SerializeField] private HighScoreHandler highScoreHandler;
         // Use this for initialization
-        void Start ()
+        void Start()
         {
             print("Waiting for High Scores...");
             LoadHighscore();
@@ -25,35 +25,34 @@ namespace gui
             List<Dropdown.OptionData> menuOptions = tspDropdown.GetComponent<Dropdown>().options;
             string tspName = menuOptions[menuIndex].text;
             PlayerPrefs.SetString("TspName", tspName);
-
-            #if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN
             List<HighScoreEntry> scores = highScoreHandler.GetScores(PlayerPrefs.GetString("TspName"), HighScoreHandler.ORDER_TYPE_ASC);
             setScores(scores);
-            #endif
+#endif
 
 
-            #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
             StartCoroutine(highScoreHandler.ScoresWebGL());
             StartCoroutine(checkScores(highScoreHandler));
-            #endif           
+#endif
         }
 
-        IEnumerator checkScores( HighScoreHandler h )
+        IEnumerator checkScores(HighScoreHandler h)
         {
-            while (!h.ReadHighScoresFinished )
+            while (!h.ReadHighScoresFinished)
                 yield return new WaitForSeconds(0.1f);
             setScores(h.Result);
         }
 
-        void setScores( List<HighScoreEntry> scores )
+        void setScores(List<HighScoreEntry> scores)
         {
             scores.Sort((e1, e2) => e1.UserScore.CompareTo(e2.UserScore));
-       
+
             var text = "";
 
             for (int i = 0; i < scores.Count; i++)
-            {               
+            {
                 var highScoreEntry = scores[i];
                 text += string.Format("{0}\t{1}\t\t{2}\n", (i + 1), highScoreEntry.Name, highScoreEntry.UserScore);
             }

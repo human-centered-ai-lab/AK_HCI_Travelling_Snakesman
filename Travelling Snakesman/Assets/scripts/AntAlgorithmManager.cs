@@ -25,7 +25,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     private AntAlgorithms.AntAlgorithm _antAlgorithm;
 
     public const string GameName = "TravellingSnakesman";
-    public const int NumHighScoreEntries = 5;
+    public const int NumHighScoreEntries = 50;
 
     private string TspFileToUse;
     private string TspFileName;

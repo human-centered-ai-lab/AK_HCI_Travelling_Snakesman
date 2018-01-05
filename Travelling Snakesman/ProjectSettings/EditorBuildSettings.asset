@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/HighscoreScreen.unity
+    path: Assets/Scenes/StartScreen.unity
     guid: acc3adaa2ab9215469fa88ad3122ee22
   - enabled: 1
     path: Assets/Scenes/HelpScreen.unity
@@ -14,3 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainGameScreen.unity
     guid: 6f0583a579a2e08438f98bf880b1e649
+  - enabled: 1
+    path: Assets/Scenes/StatisticsScreen.unity
+    guid: 7d86ccb4eef1c234b9780ff68cdc6ea8
+  - enabled: 1
+    path: Assets/Scenes/HighscoreScreen.unity
+    guid: a57319d4207969942a1690281311e27b
