@@ -1,13 +1,23 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Buttonscript : MonoBehaviour
+public class Buttonscript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public void LoadLevelButton(string levelName)
     {
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+       
     }
 
     public void LoadLevelButtonAndSavePlayerPrefs(string levelName)
@@ -22,10 +32,12 @@ public class Buttonscript : MonoBehaviour
         PlayerPrefs.SetString("PlayerName", playerName);
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);
     }
+
     public void QuitGame()
     {
         Application.Quit();
     }
+
     public void ShowInfo()
     {
         Text infoTextField = GameObject.Find("InfoText").GetComponent<Text>();
@@ -35,6 +47,7 @@ public class Buttonscript : MonoBehaviour
             infoTextField.enabled = true;
 
     }
+
     public void SaveTspName()
     {
         Dropdown tspDropdown = GameObject.Find("TspDropdown").GetComponent<Dropdown>();

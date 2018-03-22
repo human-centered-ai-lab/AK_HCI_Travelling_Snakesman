@@ -18,10 +18,9 @@ namespace gui
 
             Time += UnityEngine.Time.deltaTime;
 
-            var minutes = Mathf.Floor(Time / 60);
-            var seconds = Time % 60;
 
-            timerLabel.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+            timerLabel.text = StringOperations.GetStringFromTime(Time, false);
         }
     }
 }

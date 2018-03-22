@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class FollowMouse : MonoBehaviour
 {
-    private bool showLine = false; 
+    private bool showLine = false;
 
-	public float Speed = 1.5f;
+    public float Speed = 1.5f;
     private float tmpTime;
 
     private Vector3 _target;
@@ -19,7 +19,7 @@ public class FollowMouse : MonoBehaviour
 
     void Start()
     {
-		_target = transform.position;
+        _target = transform.position;
 
         lineRenderer = gameObject.AddComponent<LineRenderer>();
 
@@ -40,7 +40,7 @@ public class FollowMouse : MonoBehaviour
         if (AntAlgorithmManager.Instance.IsGameFinished)
         {
             Speed = 0;
-            if(!written)
+            if (!written)
             {
                 written = true;
 
@@ -55,27 +55,19 @@ public class FollowMouse : MonoBehaviour
 
                 //Debug.Log("[user distance: " + userDistance);
                 //AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
+                GameObject time = GameObject.Find("Timer");
+                int timeInSeconds = StringOperations.GetTimeFromString(time.GetComponent<Text>().text, false);
 
-                GameObject bestTourUserText = GameObject.Find ("distance_text_1");
-                bestTourUserText.GetComponent<Text> ().text = String.Format("{0:0.00}", bestUserDistance).ToString();
+                GameObject score = GameObject.Find("ScoreValueText");
+                score.GetComponent<Text>().text = timeInSeconds + "";
 
-                GameObject bestTourText = GameObject.Find("distance_text_2");
-                bestTourText.GetComponent<Text>().text = String.Format("{0:0.00}", bestAlgorithmDistance).ToString();
+                GameObject gameEndedCanvas = GameObject.Find("GameEndedCanvas");
+                gameEndedCanvas.GetComponent<Canvas>().enabled = true;
 
-                float improved = (((float)AntAlgorithmManager.Instance.BestAlgorithmLength) 
-                    - ((float)AntAlgorithmManager.Instance.BestTourLength)) / ((float)AntAlgorithmManager.Instance.BestAlgorithmLength) * 100;
-                Debug.Log("improved: " + improved);
+                GameObject gameCanvas = GameObject.Find("Canvas");
+                gameCanvas.GetComponent<Canvas>().enabled = false;
 
-                GameObject improvedText = GameObject.Find("distance_text_3");
-                improvedText.GetComponent<Text>().text = improved.ToString("0.00") + " %";
-
-                GameObject gameEndedCanvas = GameObject.Find ("GameEndedCanvas");
-				gameEndedCanvas.GetComponent<Canvas> ().enabled = true;
-
-				GameObject gameCanvas = GameObject.Find ("Canvas");
-				gameCanvas.GetComponent<Canvas> ().enabled = false;
-
-                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString ("PlayerName"),  PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, bestAlgorithIteration, bestAlgoritmTour, bestUserDistance, bestUserIteration, bestUserTour));
+                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString("PlayerName"), PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, bestAlgorithIteration, bestAlgoritmTour, bestUserDistance, bestUserIteration, bestUserTour, timeInSeconds));
             }
 
             if (showLine)

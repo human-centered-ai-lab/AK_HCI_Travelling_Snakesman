@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using util;
 
+
 namespace AntAlgorithm.tools
 {
     [Serializable]
@@ -15,6 +16,8 @@ namespace AntAlgorithm.tools
         public string Name;
         public double UserScore;
         public double AlgoScore;
+        public int Time;
+
 
         private HighScoreEntry()
         {
@@ -22,6 +25,7 @@ namespace AntAlgorithm.tools
             Name = null;
             UserScore = -1;
             AlgoScore = -1;
+            Time = 0;
         }
 
         public static HighScoreEntry Create(string line)
@@ -60,7 +64,8 @@ namespace AntAlgorithm.tools
             string algoTour,
             double userScore,
             int userBestIteration,
-            string userTour)
+            string userTour,
+            int timeInSeconds)
         {
             string url = AddScoreURL.TrimEnd('?');
             var postValues = new Dictionary<string, string>();
@@ -74,6 +79,8 @@ namespace AntAlgorithm.tools
             postValues["userscore"] = userScore.ToString();
             postValues["userbestiteration"] = userBestIteration.ToString();
             postValues["usertour"] = userTour;
+            postValues["time"] = timeInSeconds.ToString();
+
 
             postValues["hash"] = Hash(SecretKey);
 
@@ -89,7 +96,7 @@ namespace AntAlgorithm.tools
 #endif
 
 #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour));
+            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour, timeInSeconds));
 #endif
         }
 
@@ -100,20 +107,24 @@ namespace AntAlgorithm.tools
                                                   string algoBestTour,
                                                   double userScore,
                                                   int userBestIteration,
-                                                  string userBestTour
+                                                  string userBestTour,
+                                                  int timeInSeconds
                                                   )
         {
+
             string url = AddScoreURL
                              + "name=" + WWW.EscapeURL(userName)
                              + "&userscore=" + userScore
                              + "&tspname=" + WWW.EscapeURL(tspName)
-                             + "&hash=" + WWW.EscapeURL(Hash(SecretKey))
+                             + "&hash=" + WWW.EscapeURL(Hash(SecretKey + algoScore + userScore + userName))
                              + "&userbestiteration=" + userBestIteration
                              + "&usertour=" + userBestTour
                              + "&algoscore=" + algoScore
                              + "&algobestiteration=" + algoBestIteration
-                             + "&algotour=" + algoBestTour;
-                          
+                             + "&algotour=" + algoBestTour
+                             + "&time=" + timeInSeconds;
+
+
             print(url);
             WWW hsPost = new WWW(url);
             yield return hsPost;
@@ -130,13 +141,15 @@ namespace AntAlgorithm.tools
             ReadHighScoresFinished = false;
             string tspName = PlayerPrefs.GetString("TspName");
             int orderType = ORDER_TYPE_ASC;
+            string timespan = PlayerPrefs.GetString("TimeSpan");
 
             int numberOfEntries = AntAlgorithmManager.NumHighScoreEntries;
 
             var url = HighscoreURL
                   + "tsp=" + WWW.EscapeURL(tspName)
                   + "&num=" + numberOfEntries
-                  + "&order=" + orderType;
+                  + "&order=" + orderType
+                  + "&timespan=" + timespan;
             WWW www = new WWW(url);
 
             yield return www;

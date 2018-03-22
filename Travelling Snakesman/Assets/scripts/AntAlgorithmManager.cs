@@ -125,7 +125,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         }
 
         _remainingFood = new GameObject[Cities.Count];
-        _antAlgorithmChooser = new AntAlgorithmChooser(Mode.MinMaxAntSystem, 1, 5, 0.02, 51, -1, 0.05);
+        _antAlgorithmChooser = new AntAlgorithmChooser(Mode.MinMaxAntSystem, 1, 2, 0.02, 51, -1, 0.05);
         _antAlgorithm = _antAlgorithmChooser.Algorithm;
         //_antAlgorithm = transform.GetOrAddComponent<AntAlgorithm>();
         _antAlgorithm.Cities = (Cities);
