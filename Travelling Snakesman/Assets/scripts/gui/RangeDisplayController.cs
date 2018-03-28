@@ -7,14 +7,13 @@ namespace gui
     public class RangeDisplayController : MonoBehaviour
     {
         [SerializeField]
-        private Text rangeLabel;
+        private Image rangeLabel;
         private bool IsInitialized { get; set; }
         private Vector3 lastPosition;
 
         // Use this for initialization
         void Start()
         {
-            rangeLabel.text = "0.00";
         }
 
         // Update is called once per frame
@@ -34,7 +33,6 @@ namespace gui
                     rangeLabel.color = Color.red;
                 }
 
-            rangeLabel.text = "Score: " + String.Format("{0:0.00}", AntAlgorithmManager.Instance.BestTourLength);
         }
     }
 }

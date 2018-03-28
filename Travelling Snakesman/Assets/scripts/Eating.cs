@@ -5,6 +5,7 @@ public class Eating : MonoBehaviour
 {
     public int maxSnakeLength = 15;
     public GameObject snakeBodyPrefab;
+    public Animator animator;
     private int currentSnakeLength = 3;
     private GameObject lastSnakeBodyPart;
     private AudioSource audioSource;
@@ -15,15 +16,16 @@ public class Eating : MonoBehaviour
 
     void Start()
     {
+        animator = GetComponent<Animator>();
         lastSnakeBodyPart = GameObject.Find("snake_body_2");
         audioSource = GetComponent<AudioSource>();
-        _rangeDisplayController = GameObject.FindGameObjectWithTag("RangeDisplay").GetComponent<RangeDisplayController>();
         _counterDisplayController = GameObject.FindGameObjectWithTag("CounterDisplay").GetComponent<CounterDisplayController>();
         _foodEaten = 0;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        animator.SetTrigger("eat");
         if (!other.gameObject.CompareTag("Food"))
         {
             return;
@@ -33,7 +35,6 @@ public class Eating : MonoBehaviour
 
         Vector3 realCityCoordinates = getRealCityCoordinatesOfFoodGameObject(other);
 
-        //_rangeDisplayController.UpdateRange(other.gameObject.transform.position); //gameObject coordinates
 
         _counterDisplayController.UpdateRange(_foodEaten);
 
@@ -59,6 +60,7 @@ public class Eating : MonoBehaviour
         //we have a new last part
         lastSnakeBodyPart = newSnakeBodyPart;
         currentSnakeLength++;
+
     }
 
     //VERY dirty code to get real coordinates of city (game coordinates are not equal to real city coordinates)

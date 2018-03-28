@@ -7,11 +7,13 @@ using UnityEngine.UI;
 public class FollowMouse : MonoBehaviour
 {
     private bool showLine = false;
+    private bool timeSet = false;
 
     public float Speed = 1.5f;
     private float tmpTime;
 
     private Vector3 _target;
+    private bool escPressed = false;
 
     private LineRenderer lineRenderer;
     public Material material;
@@ -35,6 +37,32 @@ public class FollowMouse : MonoBehaviour
 
     void Update()
     {
+        GameObject timer = GameObject.Find("Timer");
+        float timeFloat = timer.GetComponent<TimerDisplayController>().Time;
+        GameObject countdown = GameObject.Find("Countdown");
+        if (timeFloat < 1.0f && !timeSet)
+        {
+            countdown.GetComponent<Text>().text = 3 + "";
+            return;
+        }
+        else if (timeFloat < 2.0f && !timeSet)
+        {
+            countdown.GetComponent<Text>().text = 2 + "";
+            return;
+        }
+        else if (timeFloat < 3.0f && !timeSet)
+        {
+            countdown.GetComponent<Text>().text = 1 + "";
+            return;
+        }
+        else if (timeFloat > 3.0f && !timeSet)
+        {
+            timer.GetComponent<TimerDisplayController>().Time = 0;
+            timeSet = true;
+            return;
+        }
+        countdown.GetComponent<Text>().text = "";
+
         //don't rotate main camera
         Camera.main.transform.rotation = Quaternion.identity;
         if (AntAlgorithmManager.Instance.IsGameFinished)
@@ -56,10 +84,10 @@ public class FollowMouse : MonoBehaviour
                 //Debug.Log("[user distance: " + userDistance);
                 //AntAlgorithmManager.Instance.PrintBestTour("user best tour: ");
                 GameObject time = GameObject.Find("Timer");
-                int timeInSeconds = StringOperations.GetTimeFromString(time.GetComponent<Text>().text, false);
+                int timeInMillis = StringOperations.GetTimeFromString(time.GetComponent<Text>().text);
 
                 GameObject score = GameObject.Find("ScoreValueText");
-                score.GetComponent<Text>().text = timeInSeconds + "";
+                score.GetComponent<Text>().text = StringOperations.GetStringFromTime(timeInMillis);
 
                 GameObject gameEndedCanvas = GameObject.Find("GameEndedCanvas");
                 gameEndedCanvas.GetComponent<Canvas>().enabled = true;
@@ -67,7 +95,7 @@ public class FollowMouse : MonoBehaviour
                 GameObject gameCanvas = GameObject.Find("Canvas");
                 gameCanvas.GetComponent<Canvas>().enabled = false;
 
-                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString("PlayerName"), PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, bestAlgorithIteration, bestAlgoritmTour, bestUserDistance, bestUserIteration, bestUserTour, timeInSeconds));
+                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString("PlayerName"), PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, bestAlgorithIteration, bestAlgoritmTour, bestUserDistance, bestUserIteration, bestUserTour, timeInMillis));
             }
 
             if (showLine)
@@ -77,22 +105,30 @@ public class FollowMouse : MonoBehaviour
             return;
         }
 
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyUp(KeyCode.Escape))
         {
-            GameObject timer = GameObject.Find("Timer");
-            tmpTime = timer.GetComponent<TimerDisplayController>().Time;
+            if (escPressed)
+            {
+                ResumeSpeed();
+                escPressed = false;
 
-            Speed = 0;
-            GameObject gameEndedCanvas = GameObject.Find("QuitGameCanvas");
-            gameEndedCanvas.GetComponent<Canvas>().enabled = true;
+            }
+            else
+            {
 
-            GameObject gameCanvas = GameObject.Find("Canvas");
-            gameCanvas.GetComponent<Canvas>().enabled = false;
+                escPressed = true;
+                tmpTime = timer.GetComponent<TimerDisplayController>().Time;
 
-            GameObject resumeGameButton = GameObject.Find("ResumeGameButton");
-            resumeGameButton.GetComponent<Button>().onClick.AddListener(resumeSpeed);
+                Speed = 0;
+                GameObject gameEndedCanvas = GameObject.Find("QuitGameCanvas");
+                gameEndedCanvas.GetComponent<Canvas>().enabled = true;
 
+                GameObject gameCanvas = GameObject.Find("Canvas");
+                gameCanvas.GetComponent<Canvas>().enabled = false;
 
+                GameObject resumeGameButton = GameObject.Find("ResumeGameButton");
+                resumeGameButton.GetComponent<Button>().onClick.AddListener(ResumeSpeed);
+            }
         }
 
         if (showLine)
@@ -115,7 +151,7 @@ public class FollowMouse : MonoBehaviour
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
-    private void resumeSpeed()
+    private void ResumeSpeed()
     {
         Speed = 3f;
 

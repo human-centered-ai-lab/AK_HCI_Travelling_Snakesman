@@ -65,7 +65,7 @@ namespace AntAlgorithm.tools
             double userScore,
             int userBestIteration,
             string userTour,
-            int timeInSeconds)
+            int timeInMillis)
         {
             string url = AddScoreURL.TrimEnd('?');
             var postValues = new Dictionary<string, string>();
@@ -79,7 +79,7 @@ namespace AntAlgorithm.tools
             postValues["userscore"] = userScore.ToString();
             postValues["userbestiteration"] = userBestIteration.ToString();
             postValues["usertour"] = userTour;
-            postValues["time"] = timeInSeconds.ToString();
+            postValues["time"] = timeInMillis.ToString();
 
 
             postValues["hash"] = Hash(SecretKey);
@@ -96,7 +96,7 @@ namespace AntAlgorithm.tools
 #endif
 
 #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour, timeInSeconds));
+            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour, timeInMillis));
 #endif
         }
 
@@ -108,7 +108,7 @@ namespace AntAlgorithm.tools
                                                   double userScore,
                                                   int userBestIteration,
                                                   string userBestTour,
-                                                  int timeInSeconds
+                                                  int timeInMillis
                                                   )
         {
 
@@ -122,7 +122,7 @@ namespace AntAlgorithm.tools
                              + "&algoscore=" + algoScore
                              + "&algobestiteration=" + algoBestIteration
                              + "&algotour=" + algoBestTour
-                             + "&time=" + timeInSeconds;
+                             + "&time=" + timeInMillis;
 
 
             print(url);

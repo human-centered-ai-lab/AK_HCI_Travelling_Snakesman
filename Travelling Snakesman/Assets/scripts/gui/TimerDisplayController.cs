@@ -18,9 +18,7 @@ namespace gui
 
             Time += UnityEngine.Time.deltaTime;
 
-
-
-            timerLabel.text = StringOperations.GetStringFromTime(Time, false);
+            timerLabel.text = StringOperations.GetStringFromTime(Time * 1000);
         }
     }
 }

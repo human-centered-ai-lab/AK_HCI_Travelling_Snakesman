@@ -11,6 +11,7 @@ public class Buttonscript : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);
     }
 
+
     public void OnPointerEnter(PointerEventData eventData)
     {
     }
@@ -26,6 +27,7 @@ public class Buttonscript : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         Dropdown tspDropdown = GameObject.Find("TspDropdown").GetComponent<Dropdown>();
         int menuIndex = tspDropdown.GetComponent<Dropdown>().value;
         List<Dropdown.OptionData> menuOptions = tspDropdown.GetComponent<Dropdown>().options;
+        AntAlgorithmManager.NumOfLevels = menuOptions.Count;
         string tspName = menuOptions[menuIndex].text;
         PlayerPrefs.SetString("TspName", tspName);
         PlayerPrefs.DeleteKey(playerName);

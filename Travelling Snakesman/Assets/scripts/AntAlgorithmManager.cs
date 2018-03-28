@@ -7,10 +7,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using AntAlgorithms;
+using gui;
 
 public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
     [SerializeField] private uint GameBoardSize = 25;
+
 
     protected AntAlgorithmManager()
     {
@@ -26,6 +28,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public const string GameName = "TravellingSnakesman";
     public const int NumHighScoreEntries = 50;
+    public static int NumOfLevels;
 
     private string TspFileToUse;
     private string TspFileName;
@@ -125,7 +128,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         }
 
         _remainingFood = new GameObject[Cities.Count];
-        _antAlgorithmChooser = new AntAlgorithmChooser(Mode.MinMaxAntSystem, 1, 2, 0.02, 51, -1, 0.05);
+        _antAlgorithmChooser = new AntAlgorithmChooser(Mode.MinMaxAntSystem, 1, 2, 0.02, Cities.Count, -1, 0.05);
         _antAlgorithm = _antAlgorithmChooser.Algorithm;
         //_antAlgorithm = transform.GetOrAddComponent<AntAlgorithm>();
         _antAlgorithm.Cities = (Cities);
@@ -140,6 +143,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         BestAlgorithmIteration = BestItertation;
         _initializationFinished = true;
         _antAlgorithm.Init();
+        GameObject timer = GameObject.Find("Timer");
+        timer.GetComponent<TimerDisplayController>().Time = 0;
     }
 
     public void RunXIterations(int numIter)
@@ -170,6 +175,8 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void UnregisterEatenFood(int id)
     {
+        RunXIterations(5);
+
         Debug.Log(string.Format("!UnregisterEatenFood on {0}!", GetHashCode()));
         _userTour.Add(id);
         _userTourCities.Add(Cities[id]);
@@ -179,7 +186,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         var max = GetRemainingMaximum(pheromones);
         var min = GetRemainingMinimum(pheromones);
 
-        //Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
+        Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
 
         for (int i = 0; i < pheromones.Length; i++)
         {
@@ -196,7 +203,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         //Debug.Log(_antAlgorithm.Pheromones.ToString);
 
         UpdatePheromones();
-        RunXIterations(5);
     }
 
     private void UpdatePheromones()

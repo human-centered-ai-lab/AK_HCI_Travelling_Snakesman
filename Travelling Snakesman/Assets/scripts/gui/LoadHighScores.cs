@@ -14,13 +14,23 @@ namespace gui
         private const string DAILY_MODE_TEXT = "TODAY";
 
         [SerializeField]
-        private Text remainingHighscoreText;
+        private Text remainingHighscoreText1;
+        [SerializeField]
+        private Text remainingHighscoreText2;
+        [SerializeField]
+        private Text remainingHighscoreText3;
         [SerializeField]
         private Text firstPlaceText;
         [SerializeField]
         private Text secondPlaceText;
         [SerializeField]
         private Text thirdPlaceText;
+        [SerializeField]
+        private Text firstPlaceScore;
+        [SerializeField]
+        private Text secondPlaceScore;
+        [SerializeField]
+        private Text thirdPlaceScore;
         [SerializeField]
         private Button leftButton;
         [SerializeField]
@@ -58,7 +68,6 @@ namespace gui
                 PlayerPrefs.SetString("TimeSpan", ALLTIME_MODE_TEXT);
             }
             LoadHighscore();
-
         }
         public void ChangeModeLeft()
         {
@@ -78,7 +87,6 @@ namespace gui
                 PlayerPrefs.SetString("TimeSpan", ALLTIME_MODE_TEXT);
             }
             LoadHighscore();
-
         }
 
         public void LoadHighscore()
@@ -112,29 +120,50 @@ namespace gui
         {
             scores.Sort((e1, e2) => e1.Time.CompareTo(e2.Time));
 
+            var place = "";
             var text = "";
+            var score = "";
+
             int size = scores.Count;
 
             for (int i = 0; i < 3; i++)
             {
                 if (scores.Count > i)
-                    text = string.Format("{0}\t{1}", scores[i].Name, StringOperations.GetStringFromTime(scores[i].Time, false));
-                if(i == 0)
+                {
+                    text = scores[i].Name;
+                    score = StringOperations.GetStringFromTime(scores[i].Time);
+                }
+                if (i == 0)
+                {
                     firstPlaceText.text = text;
+                    firstPlaceScore.text = score;
+                }
                 if (i == 1)
+                {
                     secondPlaceText.text = text;
+                    secondPlaceScore.text = score;
+                }
                 if (i == 2)
+                {
                     thirdPlaceText.text = text;
+                    thirdPlaceScore.text = score;
+                }
                 text = "";
+                score = "";
             }
 
             for (int i = 3; i < scores.Count; i++)
             {
                 var highScoreEntry = scores[i];
-                text += string.Format("{0}\t{1}\t\t{2}\n", (i + 1), highScoreEntry.Name, StringOperations.GetStringFromTime(scores[i].Time, false));
+                place += (i + 1) + "\n";
+                text += highScoreEntry.Name + "\n";
+                score += StringOperations.GetStringFromTime(scores[i].Time) + "\n";
             }
+            remainingHighscoreText1.text = place;
+            remainingHighscoreText2.text = text;
+            remainingHighscoreText3.text = score;
+
             text = text.TrimEnd('\n');
-            remainingHighscoreText.text = text;
         }
     }
 }
