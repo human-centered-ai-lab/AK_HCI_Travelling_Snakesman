@@ -8,13 +8,20 @@ public class LevelCompleteHandler : MonoBehaviour
 {
     [SerializeField]
     private Button nextLevelButton;
+    [SerializeField]
+    private GameObject background;
+    [SerializeField]
+    private AudioSource audioSource;
     private bool isNextLevelButton = true;
     private string nextLevel;
+    private int numOfBackgrounds = 3;
     void Start()
     {
         nextLevelButton.onClick.AddListener(PerformClick);
         SetUI();
+        SetBackground();
     }
+
     void SetUI()
     {
         for (int i = 0; i < AntAlgorithmManager.NumOfLevels; i++)
@@ -35,6 +42,21 @@ public class LevelCompleteHandler : MonoBehaviour
         }
     }
 
+    void SetBackground()
+    {
+        for (int i = 0; i < AntAlgorithmManager.NumOfLevels; i++)
+        {
+            int backgroundNo = ((i + 1) % numOfBackgrounds) + 1; 
+            if (PlayerPrefs.GetString("TspName") == ("Level" + (i+1)))
+            {
+                Sprite backgroundSprite = Resources.Load("Sprites/background" + backgroundNo, typeof(Sprite)) as Sprite;
+                background.GetComponent<SpriteRenderer>().sprite = backgroundSprite;
+                audioSource.clip = Resources.Load("Sounds/backgroundMusic" + backgroundNo) as AudioClip;
+                audioSource.Play();
+            }
+        }
+    }
+
     void PerformClick()
     {
         if (isNextLevelButton)
@@ -46,11 +68,6 @@ public class LevelCompleteHandler : MonoBehaviour
         {
             SceneManager.LoadScene("HighscoreScreen", LoadSceneMode.Single);
         }
-    }
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
 

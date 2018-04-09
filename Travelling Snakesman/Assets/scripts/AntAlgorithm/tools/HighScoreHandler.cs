@@ -52,8 +52,8 @@ namespace AntAlgorithm.tools
     {
         public static int ORDER_TYPE_ASC = 1;
         private const string SecretKey = "rLdZyTAJeynUh6JDR8Sut8Yj1sLXIPWO";
-        private const string AddScoreURL = "http://iml.hci-kdd.org/serverscripts/addscore.php?";
-        private const string HighscoreURL = "http://iml.hci-kdd.org/serverscripts/getscores.php?";
+        private const string AddScoreURL = "https://iml.hci-kdd.org/serverscripts/addscore.php?";
+        private const string HighscoreURL = "https://iml.hci-kdd.org/serverscripts/getscores.php?";
         public bool ReadHighScoresFinished = false;
         public List<HighScoreEntry> Result;
 

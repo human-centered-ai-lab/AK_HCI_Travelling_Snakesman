@@ -918,20 +918,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'The travelling snake(sman) is hungry and wants to eat fresh apples.
-
-    Help him to find all the apples as fast as possible!
-
-    The snake''s choice is indicated as the brightest apple, but is this really the
-    fastest way to go?
-
-    Positions of apples that do not fit on the screen are indicated by the white arrow.
-
-
-    Find the fastest way to eat all apples to rule the highscore list!
-
-
-    Music by Axton Dylan Crolle'
+  m_Text: "The travelling snake(sman) is hungry and wants to eat fresh apples.\nHelp
+    him to find all the apples as fast as possible!\nThe snake's choice is indicated
+    as the brightest apple, but is this really the fastest way to go?\nPositions of
+    apples that do not fit on the screen are indicated by the white arrow.\n\nFind
+    the fastest way to eat all apples to rule the highscore list!\n\nMusic by Axton
+    Dylan Crolle, Alexandr Zhelanov\nMade by Andrej M\xFCller & AK HCI group 2017\nFor
+    suggestions or bug reports: andrej.mueller@student.tugraz.at"
 --- !u!222 &2063956090
 CanvasRenderer:
   m_ObjectHideFlags: 0

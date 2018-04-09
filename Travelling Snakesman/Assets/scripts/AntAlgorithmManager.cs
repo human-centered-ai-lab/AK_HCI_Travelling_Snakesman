@@ -136,6 +136,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         FoodController.InitializeFoodPositions(GameBoardSize);
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
+        // precalculation for algorithm only solution
         RunXIterations(Cities.Count * 5);
         PrintBestTour("algo best tour");
         BestAlgorithmLength = BestTourLength;
