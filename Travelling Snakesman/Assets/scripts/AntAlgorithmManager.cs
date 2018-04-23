@@ -13,7 +13,6 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 {
     [SerializeField] private uint GameBoardSize = 25;
 
-
     protected AntAlgorithmManager()
     {
         //PlayerPrefs.DeleteAll();
@@ -28,7 +27,11 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public const string GameName = "TravellingSnakesman";
     public const int NumHighScoreEntries = 50;
+    public const int NumOfiterationsBetweenEating = 5;
+
     public static int NumOfLevels;
+    public List<PheromoneEntry> PheromoneHistory;
+    public int Iteration;
 
     private string TspFileToUse;
     private string TspFileName;
@@ -55,6 +58,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     private void Start()
     {
+        PheromoneHistory = new List<PheromoneEntry>();
         _initializationFinished = false;
         Debug.Log(string.Format("!Start called on {0}!", GetHashCode()));
         Debug.Log("--- FIND EDITION ---");
@@ -76,31 +80,28 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         TspFileName = PlayerPrefs.GetString("TspName");
         TspFileToUse = TspFileName + ".tsp";
 
-    #if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN
         Debug.Log("Stand Alone Windows");
         Cities = TSPImporter.ImportTsp(TspFileToUse);
         Init();
-    #endif
+#endif
 
-    #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         TSPImporter tsp = new TSPImporter();
         Debug.Log("WebGL or Mobile");
         StartCoroutine(tsp.importTspFromWebWebGL(TspFileToUse));
         StartCoroutine(InitWebGL(tsp));
         Cities = tsp.Cities;
-    #endif
+#endif
 
 
     }
-
     private IEnumerator InitWebGL(TSPImporter tsp)
     {
         while (!tsp.loadingComplete)
             yield return new WaitForSeconds(0.1f);
         Init();
     }
-
-
     public void Update()
     {
         if (IsGameFinished)
@@ -111,11 +112,17 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void Init()
     {
+        Iteration = 0;
         Debug.Log(string.Format("!RUNNING INIT on {0}!", GetHashCode()));
         if (_userTour.Count != 0)
         {
             _userTour.Clear();
             Debug.Log("\tUser tour cleared.");
+        }
+        if (PheromoneHistory.Count != 0)
+        {
+            PheromoneHistory.Clear();
+            Debug.Log("\t Pheromone History cleared.");
         }
         if (_userTourCities.Count != 0)
         {
@@ -137,7 +144,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
         _nextBestFoodPosition = new Vector3(0, 0, 0); // init
         // precalculation for algorithm only solution
-        RunXIterations(Cities.Count * 5);
+        RunXIterations(Cities.Count * NumOfiterationsBetweenEating);
         PrintBestTour("algo best tour");
         BestAlgorithmLength = BestTourLength;
         BestAlgorithmTour = TourToString(BestTour);
@@ -176,25 +183,26 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public void UnregisterEatenFood(int id)
     {
-        RunXIterations(5);
-
-        Debug.Log(string.Format("!UnregisterEatenFood on {0}!", GetHashCode()));
+        RunXIterations(NumOfiterationsBetweenEating);
+        Iteration += NumOfiterationsBetweenEating;
+        Debug.Log(string.Format("!UnregisterEatenFood {0}!", id));
         _userTour.Add(id);
         _userTourCities.Add(Cities[id]);
+       // Debug.Log(string.Format("ut {0} - utc: {1}", _userTour[_userTour.Count - 1], _userTourCities[_userTourCities.Count - 1].Id));
 
         _remainingFood[id] = null;
         var pheromones = _antAlgorithm.Pheromones.GetPheromones(id);
+        PheromoneHistory.Add(new PheromoneEntry(GetRemainingMaximumIndex(pheromones), id, Iteration, pheromones));
         var max = GetRemainingMaximum(pheromones);
         var min = GetRemainingMinimum(pheromones);
-
         Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
 
         for (int i = 0; i < pheromones.Length; i++)
         {
-            if(_remainingFood[i] == null)
+            if (_remainingFood[i] == null)
                 continue;
-			_remainingFood[i].GetComponent<FoodController>().Redye(GetRedyeFactor(min, pheromones[i], max));
-            
+            _remainingFood[i].GetComponent<FoodController>().Redye(GetRedyeFactor(min, pheromones[i], max));
+
             // set nextBestFoodPosition because of maximum of pheromones
             if (Math.Abs(max - pheromones[i]) < 1e-6 * max)
             {
@@ -213,21 +221,21 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         var cityA = _userTour[lastIdx];
         var cityB = _userTour[lastIdx - 1];
         _antAlgorithm.Pheromones.IncreasePheromoneAs(cityA, cityB, _antAlgorithm.Pheromones.GetPheromone(cityA, cityB));
-		//_antAlgorithm.Pheromones.SetPheromone(cityA, cityB, 0.7);
+        //_antAlgorithm.Pheromones.SetPheromone(cityA, cityB, 0.7);
     }
 
     #region Helper Methods
 
     //returns value between 0 (for min value) and 1 (for max value)
-	private float GetRedyeFactor(double min, double value, double max)
-	{
-		double divisor = max - min;
-		if (Math.Abs(divisor) < 1e-6 * min) 
+    private float GetRedyeFactor(double min, double value, double max)
+    {
+        double divisor = max - min;
+        if (Math.Abs(divisor) < 1e-6 * min)
         {
-			divisor = 0.001;
-		}
-		return (float)( (value - min) / divisor );
-	}
+            divisor = 0.001;
+        }
+        return (float)((value - min) / divisor);
+    }
 
     private double GetRemainingMaximum(double[] arr)
     {
@@ -238,6 +246,26 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             tmp[visitedCityIdx] = double.MinValue;
         }
         return tmp.Max();
+    }
+
+    private int GetRemainingMaximumIndex(double[] arr)
+    {
+        var tmp = (double[])arr.Clone();
+        double maxValue = 0;
+        int maxIndex = -1;
+        foreach (var visitedCityIdx in _userTour)
+        {
+            tmp[visitedCityIdx] = double.MinValue;
+        }
+        for (int i = 0; i < tmp.Length; i++)
+        {
+            if (maxValue < tmp[i])
+            {
+                maxValue = tmp[i];
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
     }
 
     private double GetRemainingMinimum(double[] arr)
@@ -253,11 +281,11 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
     public double CalcOverallUserDistance()
     {
-		Debug.Log ("CalcOverallUserDistance. number of cities: " + _userTourCities.Count);
+        Debug.Log("CalcOverallUserDistance. number of cities: " + _userTourCities.Count);
 
         double distance = 0;
-        
-        for(int i = 0; i < _userTourCities.Count - 1; i++)
+
+        for (int i = 0; i < _userTourCities.Count - 1; i++)
         {
             City city1 = _userTourCities[i];
             City city2 = _userTourCities[i + 1];
@@ -274,10 +302,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
     public double CalcOverallDistance(List<City> cities)
     {
         double distance = 0;
-        
-		Debug.Log("CalcOverallDistance. #cities: " + _userTourCities.Count);
 
-		for(int i = 0; i < cities.Count - 1; i++)
+        Debug.Log("CalcOverallDistance. #cities: " + _userTourCities.Count);
+
+        for (int i = 0; i < cities.Count - 1; i++)
         {
             City city1 = cities[i];
             City city2 = cities[i + 1];
@@ -296,7 +324,7 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
         string tourString = "";
         for (int i = 0; i < tour.Count; i++)
         {
-            if(i == (tour.Count - 1))
+            if (i == (tour.Count - 1))
                 tourString += tour[i];
             else
                 tourString += tour[i] + "-";

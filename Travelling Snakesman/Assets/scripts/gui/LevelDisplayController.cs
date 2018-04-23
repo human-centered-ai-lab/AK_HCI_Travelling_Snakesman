@@ -13,12 +13,5 @@ public class LevelDisplayController : MonoBehaviour {
     {
         levelText.text = PlayerPrefs.GetString("TspName");
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
-
-    }
 }
 

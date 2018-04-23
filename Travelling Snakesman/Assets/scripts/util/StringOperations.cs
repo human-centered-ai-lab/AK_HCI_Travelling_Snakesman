@@ -8,9 +8,8 @@ public static class StringOperations
 
     public static int GetTimeFromString(string time)
     {
-            string[] timeStrings = time.Split(':');
-        Debug.Log("" + timeStrings[0] + "-" +  timeStrings[1] + "-" + timeStrings[2]);
-            return (Int32.Parse(timeStrings[0]) * 60000 + Int32.Parse(timeStrings[1]) * 1000 + Int32.Parse(timeStrings[2]) * 10);
+        string[] timeStrings = time.Split(':');
+        return (Int32.Parse(timeStrings[0]) * 60000 + Int32.Parse(timeStrings[1]) * 1000 + Int32.Parse(timeStrings[2]) * 10);
     }
 
     public static string GetStringFromTime(float timeInMillis)

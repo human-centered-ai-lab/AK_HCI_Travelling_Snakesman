@@ -8,6 +8,7 @@
 /* Pheromone represents the pheromones between cities */
 
 using System;
+using UnityEngine;
 using util;
 
 public class Pheromones
@@ -116,5 +117,9 @@ public class Pheromones
     public double[] GetPheromones(int cityId)
     {
         return _pheromones.GetRow(cityId);
+    }
+    public double[,] GetAllPheromones()
+    {
+        return _pheromones;
     }
 }

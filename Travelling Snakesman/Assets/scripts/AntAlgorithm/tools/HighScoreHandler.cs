@@ -18,7 +18,6 @@ namespace AntAlgorithm.tools
         public double AlgoScore;
         public int Time;
 
-
         private HighScoreEntry()
         {
             ID = null;
@@ -53,6 +52,7 @@ namespace AntAlgorithm.tools
         public static int ORDER_TYPE_ASC = 1;
         private const string SecretKey = "rLdZyTAJeynUh6JDR8Sut8Yj1sLXIPWO";
         private const string AddScoreURL = "https://iml.hci-kdd.org/serverscripts/addscore.php?";
+        private const string AddPheromoneURL = "https://iml.hci-kdd.org/serverscripts/addpheromones.php?";
         private const string HighscoreURL = "https://iml.hci-kdd.org/serverscripts/getscores.php?";
         public bool ReadHighScoresFinished = false;
         public List<HighScoreEntry> Result;
@@ -65,7 +65,9 @@ namespace AntAlgorithm.tools
             double userScore,
             int userBestIteration,
             string userTour,
-            int timeInMillis)
+            int timeInMillis,
+            Guid pheromoneID
+            )
         {
             string url = AddScoreURL.TrimEnd('?');
             var postValues = new Dictionary<string, string>();
@@ -80,6 +82,7 @@ namespace AntAlgorithm.tools
             postValues["userbestiteration"] = userBestIteration.ToString();
             postValues["usertour"] = userTour;
             postValues["time"] = timeInMillis.ToString();
+            postValues["pheromoneID"] = pheromoneID.ToString();
 
 
             postValues["hash"] = Hash(SecretKey);
@@ -96,11 +99,38 @@ namespace AntAlgorithm.tools
 #endif
 
 #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour, timeInMillis));
+            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour, timeInMillis, pheromoneID));
 #endif
         }
 
-        public static IEnumerator PostScoresAsync(string userName,
+        public static IEnumerator PostPheromonesAsync(Guid id,
+                                                  string pheromones,
+                                                  int iterations,
+                                                  int suggested,
+                                                  int previouseChosen
+                                                  )
+        {
+
+            string url = AddPheromoneURL
+                             + "id=" + id
+                             + "&pheromonevalue=" + WWW.EscapeURL(pheromones)
+                             + "&iterations=" + iterations
+                             + "&hash=" + WWW.EscapeURL(Hash(SecretKey))
+                             + "&suggested=" + suggested
+                             + "&previousechosen=" + previouseChosen;
+
+            print(url);
+            WWW hsPost = new WWW(url);
+            yield return hsPost;
+
+            if (!string.IsNullOrEmpty(hsPost.error))
+            {
+                print("There was an error posting the pheromones: " + hsPost.error);
+            }
+
+        }
+        
+            public static IEnumerator PostScoresAsync(string userName,
                                                   string tspName,
                                                   double algoScore,
                                                   int algoBestIteration,
@@ -108,7 +138,8 @@ namespace AntAlgorithm.tools
                                                   double userScore,
                                                   int userBestIteration,
                                                   string userBestTour,
-                                                  int timeInMillis
+                                                  int timeInMillis,
+                                                  Guid guid
                                                   )
         {
 
@@ -118,12 +149,12 @@ namespace AntAlgorithm.tools
                              + "&tspname=" + WWW.EscapeURL(tspName)
                              + "&hash=" + WWW.EscapeURL(Hash(SecretKey + algoScore + userScore + userName))
                              + "&userbestiteration=" + userBestIteration
-                             + "&usertour=" + userBestTour
+                             + "&usertour=" + WWW.EscapeURL(userBestTour)
                              + "&algoscore=" + algoScore
                              + "&algobestiteration=" + algoBestIteration
-                             + "&algotour=" + algoBestTour
-                             + "&time=" + timeInMillis;
-
+                             + "&algotour=" + WWW.EscapeURL(algoBestTour)
+                             + "&time=" + timeInMillis
+                             + "&pheromoneID=" + guid;
 
             print(url);
             WWW hsPost = new WWW(url);
