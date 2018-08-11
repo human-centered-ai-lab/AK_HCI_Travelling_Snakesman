@@ -2,17 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class MusicController : MonoBehaviour
+public class MainMenuMusicController : MonoBehaviour
 {
-    private static MusicController instance = null;
-    public static MusicController Instance
+    private static MainMenuMusicController instance = null;
+    public static MainMenuMusicController Instance
     {
         get { return instance; }
     }
+   
     private void Update()
     {
-        if(SceneManager.GetActiveScene().name == "MainGameScreen")
+        if(PlayerPrefs.GetInt("mute") == 1)
+        {
+            this.gameObject.GetComponent<AudioSource>().mute = true;
+        }
+        else
+        {
+            this.gameObject.GetComponent<AudioSource>().mute = false;
+
+        }
+        if (SceneManager.GetActiveScene().name == "MainGameScreen")
         {
             Destroy(this.gameObject);
         }

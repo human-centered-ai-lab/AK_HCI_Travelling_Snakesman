@@ -39,7 +39,7 @@ namespace AntAlgorithm.tools
         {
             Cities = new List<City>();
             //this.TspWebDirectory = "http://www.andrejmueller.com/TSPLIB/"; // original
-            TspWebDirectory = "http://iml.hci-kdd.org/TSPLIB/";
+            TspWebDirectory = "https://iml.hci-kdd.org/TSPLIB/";
 
         }
 

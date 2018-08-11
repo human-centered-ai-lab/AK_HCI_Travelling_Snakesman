@@ -66,7 +66,8 @@ namespace AntAlgorithm.tools
             int userBestIteration,
             string userTour,
             int timeInMillis,
-            Guid pheromoneID
+            Guid guid,
+            string platform
             )
         {
             string url = AddScoreURL.TrimEnd('?');
@@ -82,8 +83,8 @@ namespace AntAlgorithm.tools
             postValues["userbestiteration"] = userBestIteration.ToString();
             postValues["usertour"] = userTour;
             postValues["time"] = timeInMillis.ToString();
-            postValues["pheromoneID"] = pheromoneID.ToString();
-
+            postValues["ID"] = guid.ToString();
+            postValues["platform"] = platform.ToString();
 
             postValues["hash"] = Hash(SecretKey);
 
@@ -99,7 +100,7 @@ namespace AntAlgorithm.tools
 #endif
 
 #if UNITY_WEBGL || UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-            StartCoroutine(PostScoresAsync(userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour, timeInMillis, pheromoneID));
+            StartCoroutine(PostScoresAsync(guid, userName, tspName, algoScore, algoBestIteration, algoTour, userScore, userBestIteration, userTour, timeInMillis, platform));
 #endif
         }
 
@@ -119,7 +120,6 @@ namespace AntAlgorithm.tools
                              + "&suggested=" + suggested
                              + "&previousechosen=" + previouseChosen;
 
-            print(url);
             WWW hsPost = new WWW(url);
             yield return hsPost;
 
@@ -129,18 +129,19 @@ namespace AntAlgorithm.tools
             }
 
         }
-        
-            public static IEnumerator PostScoresAsync(string userName,
-                                                  string tspName,
-                                                  double algoScore,
-                                                  int algoBestIteration,
-                                                  string algoBestTour,
-                                                  double userScore,
-                                                  int userBestIteration,
-                                                  string userBestTour,
-                                                  int timeInMillis,
-                                                  Guid guid
-                                                  )
+
+        public static IEnumerator PostScoresAsync(Guid guid,
+                                              string userName,
+                                              string tspName,
+                                              double algoScore,
+                                              int algoBestIteration,
+                                              string algoBestTour,
+                                              double userScore,
+                                              int userBestIteration,
+                                              string userBestTour,
+                                              int timeInMillis,
+                                              string platform
+                                              )
         {
 
             string url = AddScoreURL
@@ -154,9 +155,9 @@ namespace AntAlgorithm.tools
                              + "&algobestiteration=" + algoBestIteration
                              + "&algotour=" + WWW.EscapeURL(algoBestTour)
                              + "&time=" + timeInMillis
-                             + "&pheromoneID=" + guid;
+                             + "&ID=" + guid
+                             + "&platform=" + platform;
 
-            print(url);
             WWW hsPost = new WWW(url);
             yield return hsPost;
 

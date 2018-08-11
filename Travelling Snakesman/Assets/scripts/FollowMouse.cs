@@ -94,10 +94,10 @@ public class FollowMouse : MonoBehaviour
 
                 GameObject gameCanvas = GameObject.Find("Canvas");
                 gameCanvas.GetComponent<Canvas>().enabled = false;
-                Guid g = Guid.NewGuid();
+                Guid gid = Guid.NewGuid();
                 foreach (PheromoneEntry pheromoneHistoryEntry in AntAlgorithmManager.Instance.PheromoneHistory)
-                    StartCoroutine(HighScoreHandler.PostPheromonesAsync(g, pheromoneHistoryEntry.Pheromones, pheromoneHistoryEntry.Iteration, pheromoneHistoryEntry.HighestValueIndex, pheromoneHistoryEntry.PreviousChosenValueIndex));
-                StartCoroutine(HighScoreHandler.PostScoresAsync(PlayerPrefs.GetString("PlayerName"), PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, bestAlgorithIteration, bestAlgoritmTour, bestUserDistance, bestUserIteration, bestUserTour, timeInMillis, g));
+                    StartCoroutine(HighScoreHandler.PostPheromonesAsync(gid, pheromoneHistoryEntry.Pheromones, pheromoneHistoryEntry.Iteration, pheromoneHistoryEntry.HighestValueIndex, pheromoneHistoryEntry.PreviousChosenValueIndex));
+                StartCoroutine(HighScoreHandler.PostScoresAsync(gid, PlayerPrefs.GetString("PlayerName"), PlayerPrefs.GetString("TspName"), bestAlgorithmDistance, bestAlgorithIteration, bestAlgoritmTour, bestUserDistance, bestUserIteration, bestUserTour, timeInMillis, "webglnear"));
             }
 
             if (showLine)

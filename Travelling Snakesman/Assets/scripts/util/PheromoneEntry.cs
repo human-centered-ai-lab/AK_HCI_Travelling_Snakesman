@@ -22,7 +22,7 @@ public class PheromoneEntry : MonoBehaviour
         string text = "";
         for(int i = 0; i < pheromones.Length; i++)
         {
-            text += PreviousChosenValueIndex + "-" + i + "-" + pheromones[i] + ":";
+            text += PreviousChosenValueIndex + "-" + i + ":" + pheromones[i] + "  ";
         }
         return text;
     }

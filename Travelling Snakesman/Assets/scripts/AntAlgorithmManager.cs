@@ -192,10 +192,10 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
 
         _remainingFood[id] = null;
         var pheromones = _antAlgorithm.Pheromones.GetPheromones(id);
-        PheromoneHistory.Add(new PheromoneEntry(GetRemainingMaximumIndex(pheromones), id, Iteration, pheromones));
+        PheromoneHistory.Add(new PheromoneEntry(GetRemainingMaximumIndex(pheromones), id, Iteration, GetRemainingPheromones(pheromones)));
         var max = GetRemainingMaximum(pheromones);
         var min = GetRemainingMinimum(pheromones);
-        Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
+       // Debug.Log(string.Format("PHEROMONES - Min: {0} - Max: {1}", min, max));
 
         for (int i = 0; i < pheromones.Length; i++)
         {
@@ -246,6 +246,17 @@ public class AntAlgorithmManager : Singleton<AntAlgorithmManager>
             tmp[visitedCityIdx] = double.MinValue;
         }
         return tmp.Max();
+    }
+
+    private double[] GetRemainingPheromones(double[] arr)
+    {
+        var tmp = (double[])arr.Clone();
+
+        foreach (var visitedCityIdx in _userTour)
+        {
+            tmp[visitedCityIdx] = double.MinValue;
+        }
+        return tmp;
     }
 
     private int GetRemainingMaximumIndex(double[] arr)
